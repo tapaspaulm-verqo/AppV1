@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   template: `
     <header class="site-header">
       <div class="container header-row">
@@ -21,11 +21,17 @@ import { RouterLink } from '@angular/router';
           </svg>
           <span class="wordmark-text">VERQO</span>
         </a>
-        <nav class="nav-links">
-          <a routerLink="/jobs">Find work</a>
-          <a routerLink="/signup/client">Hire talent</a>
-          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
+        <nav class="primary-nav">
+          <a routerLink="/talent" routerLinkActive="active">Find talent</a>
+          <a routerLink="/jobs" routerLinkActive="active">Find work</a>
+          <a routerLink="/how-it-works" routerLinkActive="active">How it works</a>
+          <a routerLink="/pricing" routerLinkActive="active">Pricing</a>
         </nav>
+        <div class="actions">
+          <a routerLink="/login" class="login-link">Log in</a>
+          <a routerLink="/business" class="btn btn-secondary">Hire talent</a>
+          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
+        </div>
       </div>
     </header>
   `,
@@ -39,7 +45,8 @@ import { RouterLink } from '@angular/router';
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: var(--space-5) var(--space-6);
+        gap: var(--space-6);
+        padding: var(--space-4) var(--space-6);
       }
       .wordmark {
         display: inline-flex;
@@ -59,19 +66,49 @@ import { RouterLink } from '@angular/router';
         letter-spacing: 0.01em;
         color: var(--ink);
       }
-      .nav-links {
+      .primary-nav {
         display: flex;
         align-items: center;
         gap: var(--space-6);
+        flex: 1;
       }
-      .nav-links a:not(.btn) {
+      .primary-nav a {
         text-decoration: none;
         font-weight: 500;
+        font-size: 14px;
+        color: var(--ink-secondary);
+      }
+      .primary-nav a:hover,
+      .primary-nav a.active {
         color: var(--ink);
       }
-      .nav-links .btn {
+      .actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-4);
+      }
+      .login-link {
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .actions .btn {
         text-decoration: none;
         display: inline-block;
+        white-space: nowrap;
+      }
+      @media (max-width: 900px) {
+        .primary-nav {
+          display: none;
+        }
+      }
+      @media (max-width: 560px) {
+        .login-link,
+        .btn-secondary {
+          display: none;
+        }
       }
     `,
   ],

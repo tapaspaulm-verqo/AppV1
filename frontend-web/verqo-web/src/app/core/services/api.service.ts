@@ -30,8 +30,25 @@ export interface JobSummary {
   roleCategory: string;
   budgetMinorMin?: number;
   budgetMinorMax?: number;
-  channel: string;
+  channel: string | number;
   createdAt: string;
+}
+
+/** Full Job entity as returned by GET /jobs/{id} — includes the fields the
+ * list endpoint omits (description, status), and does not call .ToString()
+ * on its enum fields, so channel/status arrive as numbers today. */
+export interface JobDetail {
+  id: string;
+  clientId: string;
+  title: string;
+  description: string;
+  roleCategory: string;
+  channel: string | number;
+  status: string | number;
+  budgetMinorMin?: number;
+  budgetMinorMax?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /** Thin wrapper over the single .NET Web API that also serves the Android and iOS apps. */
@@ -47,5 +64,9 @@ export class ApiService {
 
   listOpenJobs(): Observable<JobSummary[]> {
     return this.http.get<JobSummary[]>(`${this.baseUrl}/jobs`);
+  }
+
+  getJob(id: string): Observable<JobDetail> {
+    return this.http.get<JobDetail>(`${this.baseUrl}/jobs/${id}`);
   }
 }

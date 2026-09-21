@@ -185,6 +185,7 @@ a {
    .btn-accent explicitly for those, never .btn-primary. */
 button,
 .btn {
+  display: inline-block;
   font-family: var(--font-body);
   font-size: var(--text-body-size);
   font-weight: 600;
@@ -192,6 +193,7 @@ button,
   padding: var(--space-3) var(--space-5);
   border: 1px solid var(--ink);
   cursor: pointer;
+  text-decoration: none;
   transition: opacity 0.15s ease;
 }
 
