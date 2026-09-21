@@ -24,8 +24,8 @@ import { RouterLink } from '@angular/router';
 
     <section class="section">
       <div class="container grid-2">
-        <div class="card">
-          <p class="badge">For freelancers</p>
+        <div class="card card-accent-freelancer">
+          <p class="badge badge-freelancer">For freelancers</p>
           <ol class="steps">
             <li><strong>Get verified.</strong> PAN and Aadhaar are checked automatically; your EPF UAN is checked for active-employment status.</li>
             <li><strong>Apply to work.</strong> Browse open roles and submit a proposal with your rate.</li>
@@ -34,8 +34,8 @@ import { RouterLink } from '@angular/router';
             <li><strong>Get paid.</strong> Once approved — or auto-released after the review window — funds move to your bank via UPI, IMPS or NEFT.</li>
           </ol>
         </div>
-        <div class="card">
-          <p class="badge">For businesses</p>
+        <div class="card card-accent-client">
+          <p class="badge badge-client">For businesses</p>
           <ol class="steps">
             <li><strong>Post a role.</strong> Describe the work, hourly or project-based.</li>
             <li><strong>Review proposals</strong> from freelancers who have already cleared identity verification.</li>
@@ -104,8 +104,8 @@ import { RouterLink } from '@angular/router';
       <div class="container">
         <h2>Ready to see it in action?</h2>
         <div class="cta-row">
-          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
-          <a routerLink="/signup/client" class="btn btn-secondary">Hire talent</a>
+          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+          <a routerLink="/signup/client" class="btn btn-client-outline">Hire talent</a>
         </div>
       </div>
     </section>
@@ -128,6 +128,7 @@ import { RouterLink } from '@angular/router';
       }
       .card {
         padding: var(--space-8);
+        padding-left: calc(var(--space-8) - 3px);
       }
       .steps {
         margin: var(--space-6) 0 0;

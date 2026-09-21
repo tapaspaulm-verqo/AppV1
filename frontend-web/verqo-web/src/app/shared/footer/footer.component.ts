@@ -27,7 +27,7 @@ import { RouterLink } from '@angular/router';
         </div>
 
         <nav class="footer-col">
-          <h4>For clients</h4>
+          <h4 class="heading-client">For clients</h4>
           <a routerLink="/business">Hire talent</a>
           <a routerLink="/how-it-works">How it works</a>
           <a routerLink="/pricing">Pricing</a>
@@ -35,7 +35,7 @@ import { RouterLink } from '@angular/router';
         </nav>
 
         <nav class="footer-col">
-          <h4>For freelancers</h4>
+          <h4 class="heading-freelancer">For freelancers</h4>
           <a routerLink="/jobs">Find work</a>
           <a routerLink="/freelancers">Why Verqo</a>
           <a routerLink="/trust-safety">Verification &amp; trust</a>
@@ -116,6 +116,12 @@ import { RouterLink } from '@angular/router';
         letter-spacing: 0.06em;
         color: var(--silver);
         margin: 0 0 var(--space-1) 0;
+      }
+      .footer-col h4.heading-freelancer {
+        color: var(--accent);
+      }
+      .footer-col h4.heading-client {
+        color: var(--client);
       }
       .footer-col a {
         text-decoration: none;

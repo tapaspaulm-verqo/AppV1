@@ -8,11 +8,19 @@
  *  - `accent` is spent exclusively on verified / escrow-secured states:
  *    verified badges, Funded/Released states, protected-money CTAs. It is
  *    not a general "primary" color — marketing/navigation CTAs use ink.
- *  - `client` and `verqo` are logo-only colors. Do not use them for UI.
- *  - In dark mode, text on an accent fill is ink-colored, not white, to
- *    hold WCAG AA.
+ *  - `verqo` (orange) stays logo-only — never used elsewhere in the UI.
+ *  - In dark mode, text on an accent or client fill is ink-colored, not
+ *    white, to hold WCAG AA.
  *  - Money values, fee breakdowns and IDs are set in IBM Plex Mono so they
  *    "look counted, not styled".
+ *
+ * Site-wide audience color coding (explicit product decision, extending
+ * `accent`/`client` beyond the logo): green (`accent`) marks freelancer-side
+ * pages and actions, purple (`client`) marks client/business-side pages and
+ * actions — the same two colors the Vertex mark already assigns to those
+ * two node roles. Use `.badge-freelancer`/`.badge-client`,
+ * `.btn-accent`/`.btn-client`, and `.card-accent-freelancer`/
+ * `.card-accent-client` to apply it consistently.
  */
 
 :root {
@@ -25,6 +33,7 @@
   --accent: #1f5c46;
   --accent-ink: #ffffff;
   --client: #5b3e73;
+  --client-ink: #ffffff;
   --verqo: #b24300;
   --warning: #9a6b12;
   --danger: #a13a2f;
@@ -92,6 +101,7 @@
     --accent: #3f8f71;
     --accent-ink: var(--ink);
     --client: #8862a8;
+    --client-ink: var(--ink);
     --verqo: #ffaf7f;
     --warning: #c99a3e;
     --danger: #c4574a;
@@ -180,6 +190,16 @@ a {
   color: var(--ink-secondary);
 }
 
+/* Audience color coding on badges/labels — green for freelancer-side
+   content, purple for client-side content. */
+.badge-freelancer {
+  color: var(--accent);
+}
+
+.badge-client {
+  color: var(--client);
+}
+
 /* Buttons — ink-filled primary for general marketing/navigation actions.
    Accent is reserved for verified/funded/protected-money CTAs; use
    .btn-accent explicitly for those, never .btn-primary. */
@@ -216,6 +236,20 @@ button:hover,
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-ink);
+}
+
+/* Client/business-side actions — the purple half of the site's audience
+   color coding, paired with .btn-accent (green) for freelancer actions. */
+.btn-client {
+  background: var(--client);
+  border-color: var(--client);
+  color: var(--client-ink);
+}
+
+.btn-client-outline {
+  background: var(--surface-100);
+  border-color: var(--client);
+  color: var(--client);
 }
 
 input,
@@ -315,4 +349,14 @@ input.ng-touched.ng-invalid {
 .card-dark h3,
 .card-dark h4 {
   color: var(--surface-100);
+}
+
+/* Audience color coding on cards — a left accent border, green for
+   freelancer-side content and purple for client-side content. */
+.card-accent-freelancer {
+  border-left: 3px solid var(--accent);
+}
+
+.card-accent-client {
+  border-left: 3px solid var(--client);
 }

@@ -29,7 +29,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
           <div class="actions">
             <a routerLink="/" class="btn btn-secondary">Back to home</a>
             @if (cta) {
-              <a [routerLink]="cta.link" class="btn btn-primary">{{ cta.label }}</a>
+              <a [routerLink]="cta.link" class="btn" [class]="ctaClass()">{{ cta.label }}</a>
             }
           </div>
         </div>
@@ -95,5 +95,15 @@ export class ComingSoonComponent {
       "We haven't published this part of Verqo yet — check back soon.";
     this.note = data.note;
     this.cta = data.cta;
+  }
+
+  /** Colors the CTA button by audience — green for a freelancer-side
+   * destination, purple for a client/business-side one, ink otherwise —
+   * matching the site's freelancer/client color coding. */
+  ctaClass(): string {
+    const link = this.cta?.link ?? '';
+    if (link.includes('freelancer')) return 'btn-accent';
+    if (link.includes('client') || link.includes('business') || link.includes('pricing')) return 'btn-client';
+    return 'btn-primary';
   }
 }

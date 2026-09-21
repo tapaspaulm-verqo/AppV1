@@ -10,7 +10,7 @@ import { channelLabel, formatBudgetRange } from '../../core/utils/job-labels';
   imports: [CommonModule, RouterLink],
   template: `
     <section class="container jobs-page">
-      <p class="badge">Find work</p>
+      <p class="badge badge-freelancer">Find work</p>
       <h1>Open jobs</h1>
       <p class="subhead">Verified freelancers can apply once signed in. Browse what's open right now.</p>
 

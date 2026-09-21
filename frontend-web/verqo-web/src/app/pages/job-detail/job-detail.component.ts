@@ -34,14 +34,14 @@ import { channelLabel, formatBudgetRange, jobStatusLabel } from '../../core/util
               <dt>Status</dt>
               <dd>{{ statusLabel(j.status) }}</dd>
             </dl>
-            <a routerLink="/signup/freelancer" class="btn btn-primary apply-btn">Apply as a freelancer</a>
+            <a routerLink="/signup/freelancer" class="btn btn-accent apply-btn">Apply as a freelancer</a>
             <p class="apply-note">Applying requires a verified freelancer account.</p>
           </aside>
         </div>
       </section>
     } @else if (notFound()) {
       <section class="container job-detail">
-        <p class="badge">Find work</p>
+        <p class="badge badge-freelancer">Find work</p>
         <h1>We couldn't find that job</h1>
         <p class="subhead">It may have closed, or the link isn't right.</p>
         <a routerLink="/jobs" class="btn btn-secondary">Back to open jobs</a>

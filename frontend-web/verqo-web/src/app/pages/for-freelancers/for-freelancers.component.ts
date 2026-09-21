@@ -7,29 +7,29 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <section class="hero container">
-      <p class="badge">For freelancers</p>
+      <p class="badge badge-freelancer">For freelancers</p>
       <h1>Do the work. Keep 95% of what it's worth.</h1>
       <p class="subhead">
         A verified profile, a fixed 5% fee, and payment that's already sitting in escrow before
         you start. No subscriptions, no bidding against unverified accounts.
       </p>
       <div class="cta-row">
-        <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
+        <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
         <a routerLink="/jobs" class="btn btn-secondary">Browse open roles</a>
       </div>
     </section>
 
     <section class="section">
       <div class="container grid-3">
-        <div class="card">
+        <div class="card card-accent-freelancer">
           <h3>Fixed 5% fee</h3>
           <p>The same rate on every contract, from your first small fix to a long-term retainer. No tiers to climb.</p>
         </div>
-        <div class="card">
+        <div class="card card-accent-freelancer">
           <h3>Paid from escrow</h3>
           <p>Clients fund each milestone before you start work. You're never chasing payment for work already delivered.</p>
         </div>
-        <div class="card">
+        <div class="card card-accent-freelancer">
           <h3>Direct to your bank</h3>
           <p>Payouts go straight to your verified account by UPI, IMPS or NEFT — no intermediary wallet.</p>
         </div>
@@ -89,6 +89,7 @@ import { RouterLink } from '@angular/router';
       }
       .card {
         padding: var(--space-8);
+        padding-left: calc(var(--space-8) - 3px);
       }
       .card p {
         color: var(--ink-secondary);

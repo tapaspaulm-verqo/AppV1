@@ -12,6 +12,7 @@ import { panValidator } from '../../core/validators/pan.validator';
   template: `
     <section class="container form-page">
       @if (!result()) {
+        <p class="badge badge-freelancer">For freelancers</p>
         <h1>Join as a freelancer</h1>
         <p class="subhead">
           Free to join — a fixed 5% fee only when you're paid. We validate your PAN and Aadhaar
@@ -74,7 +75,7 @@ import { panValidator } from '../../core/validators/pan.validator';
             <p class="field-error">{{ errorMessage() }}</p>
           }
 
-          <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
+          <button type="submit" class="btn btn-accent" [disabled]="form.invalid || submitting()">
             {{ submitting() ? 'Verifying…' : 'Create freelancer account' }}
           </button>
         </form>

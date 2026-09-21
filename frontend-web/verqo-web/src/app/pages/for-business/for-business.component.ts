@@ -7,29 +7,29 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <section class="hero container">
-      <p class="badge">For businesses</p>
+      <p class="badge badge-client">For businesses</p>
       <h1>Hire verified tech talent. Pay only for approved work.</h1>
       <p class="subhead">
         Post a role hourly or by project, review proposals from identity-verified freelancers,
         and release payment only when the milestone is actually done.
       </p>
       <div class="cta-row">
-        <a routerLink="/signup/client" class="btn btn-primary">Hire talent</a>
+        <a routerLink="/signup/client" class="btn btn-client">Hire talent</a>
         <a routerLink="/pricing" class="btn btn-secondary">See pricing</a>
       </div>
     </section>
 
     <section class="section">
       <div class="container grid-3">
-        <div class="card">
+        <div class="card card-accent-client">
           <h3>Verified from day one</h3>
           <p>Every freelancer clears PAN and Aadhaar identity checks before their profile can apply to your role.</p>
         </div>
-        <div class="card">
+        <div class="card card-accent-client">
           <h3>Escrow-protected milestones</h3>
           <p>You fund each milestone into escrow up front, and it only releases once you approve the delivered work.</p>
         </div>
-        <div class="card">
+        <div class="card card-accent-client">
           <h3>Transparent, fixed fees</h3>
           <p>10% on the Standard plan, down to 5% on Business Plus. No subscription, no listing fee.</p>
         </div>
@@ -57,7 +57,7 @@ import { RouterLink } from '@angular/router';
             brings the fee down to 5% for teams hiring at scale through Verqo, on the same
             escrow-protected model.
           </p>
-          <a routerLink="/signup/client" class="btn btn-accent">Hire talent →</a>
+          <a routerLink="/signup/client" class="btn btn-client">Hire talent →</a>
         </div>
       </div>
     </section>
@@ -89,6 +89,7 @@ import { RouterLink } from '@angular/router';
       }
       .card {
         padding: var(--space-8);
+        padding-left: calc(var(--space-8) - 3px);
       }
       .card p {
         color: var(--ink-secondary);

@@ -23,8 +23,8 @@ import { RouterLink } from '@angular/router';
         with milestone escrow so every rupee is protected until the work is done.
       </p>
       <div class="cta-row">
-        <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
-        <a routerLink="/business" class="btn btn-secondary">Hire talent</a>
+        <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+        <a routerLink="/business" class="btn btn-client-outline">Hire talent</a>
       </div>
       <div class="trust-strip">
         <span class="trust-item"><span class="dot"></span>PAN + Aadhaar verified</span>
@@ -71,23 +71,23 @@ import { RouterLink } from '@angular/router';
       <div class="container">
         <h2>Built for both sides of the table</h2>
         <div class="grid-2">
-          <div class="card audience-card">
-            <p class="badge">For freelancers</p>
+          <div class="card audience-card card-accent-freelancer">
+            <p class="badge badge-freelancer">For freelancers</p>
             <h3>Keep 95% of every payment</h3>
             <p class="audience-copy">
               A verified profile, a fixed 5% fee, and money that's already funded before you start
               work. No bidding wars against unverified accounts, no subscription to join.
             </p>
-            <a routerLink="/freelancers" class="text-link">Why freelancers choose Verqo →</a>
+            <a routerLink="/freelancers" class="text-link text-link-freelancer">Why freelancers choose Verqo →</a>
           </div>
-          <div class="card audience-card">
-            <p class="badge">For businesses</p>
+          <div class="card audience-card card-accent-client">
+            <p class="badge badge-client">For businesses</p>
             <h3>Hire verified talent, pay for approved work</h3>
             <p class="audience-copy">
               Every freelancer's identity is checked before they can apply. Every rupee sits in
               escrow until you approve the milestone — never paid out on trust alone.
             </p>
-            <a routerLink="/business" class="text-link">Why businesses hire on Verqo →</a>
+            <a routerLink="/business" class="text-link text-link-client">Why businesses hire on Verqo →</a>
           </div>
         </div>
       </div>
@@ -121,11 +121,11 @@ import { RouterLink } from '@angular/router';
           <h2>One fixed fee. No surprises.</h2>
           <div class="pricing-teaser-row">
             <div>
-              <p class="text-data pricing-figure">5%</p>
+              <p class="text-data pricing-figure pricing-figure-freelancer">5%</p>
               <p>Fixed fee for every freelancer, on every payment</p>
             </div>
             <div>
-              <p class="text-data pricing-figure">10%</p>
+              <p class="text-data pricing-figure pricing-figure-client">10%</p>
               <p>Standard client fee — down to 5% on Business Plus</p>
             </div>
           </div>
@@ -139,8 +139,8 @@ import { RouterLink } from '@angular/router';
         <h2>Ready to get started?</h2>
         <p class="audience-copy">Join as a verified freelancer, or post a role and hire with escrow protection.</p>
         <div class="cta-row">
-          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
-          <a routerLink="/signup/client" class="btn btn-secondary">Hire talent</a>
+          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+          <a routerLink="/signup/client" class="btn btn-client-outline">Hire talent</a>
         </div>
       </div>
     </section>
@@ -234,6 +234,15 @@ import { RouterLink } from '@angular/router';
       .text-link:hover {
         text-decoration: underline;
       }
+      .text-link-freelancer {
+        color: var(--accent);
+      }
+      .text-link-client {
+        color: var(--client);
+      }
+      .audience-card {
+        padding-left: calc(var(--space-8) - 3px);
+      }
       .audience-card h3 {
         margin-top: var(--space-2);
       }
@@ -276,8 +285,13 @@ import { RouterLink } from '@angular/router';
       }
       .pricing-figure {
         font-size: 40px;
-        color: var(--accent);
         margin: 0 0 var(--space-1) 0;
+      }
+      .pricing-figure-freelancer {
+        color: var(--accent);
+      }
+      .pricing-figure-client {
+        color: var(--client);
       }
       .pricing-teaser-row p:last-child {
         color: var(--surface-200);

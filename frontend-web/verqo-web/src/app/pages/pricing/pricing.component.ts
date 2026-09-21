@@ -24,25 +24,25 @@ import { RouterLink } from '@angular/router';
 
     <section class="section">
       <div class="container grid-2">
-        <div class="card plan-card">
-          <p class="badge">Freelancers</p>
-          <p class="text-data plan-figure">5%</p>
+        <div class="card plan-card card-accent-freelancer">
+          <p class="badge badge-freelancer">Freelancers</p>
+          <p class="text-data plan-figure plan-figure-freelancer">5%</p>
           <h3>One fixed fee, always</h3>
           <p class="plan-copy">
             You keep 95% of every payment. The fee is the same whether you're taking on your
             first ₹5,000 fix or a six-figure retainer — no tiers, no negotiation.
           </p>
-          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
+          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
         </div>
-        <div class="card plan-card">
-          <p class="badge">Businesses</p>
-          <p class="text-data plan-figure">10% / 5%</p>
+        <div class="card plan-card card-accent-client">
+          <p class="badge badge-client">Businesses</p>
+          <p class="text-data plan-figure plan-figure-client">10% / 5%</p>
           <h3>Standard or Business Plus</h3>
           <p class="plan-copy">
             The Standard plan charges 10% on contract value. Business Plus brings that down to
             5% for teams hiring at scale through Verqo.
           </p>
-          <a routerLink="/signup/client" class="btn btn-secondary">Hire talent</a>
+          <a routerLink="/signup/client" class="btn btn-client-outline">Hire talent</a>
         </div>
       </div>
     </section>
@@ -85,8 +85,8 @@ import { RouterLink } from '@angular/router';
       <div class="container">
         <h2>No hidden layers. That's the whole fee structure.</h2>
         <div class="cta-row">
-          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
-          <a routerLink="/signup/client" class="btn btn-secondary">Hire talent</a>
+          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+          <a routerLink="/signup/client" class="btn btn-client-outline">Hire talent</a>
         </div>
       </div>
     </section>
@@ -120,11 +120,17 @@ import { RouterLink } from '@angular/router';
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        padding-left: calc(var(--space-8) - 3px);
       }
       .plan-figure {
         font-size: 44px;
-        color: var(--accent);
         margin: var(--space-3) 0 var(--space-1);
+      }
+      .plan-figure-freelancer {
+        color: var(--accent);
+      }
+      .plan-figure-client {
+        color: var(--client);
       }
       .plan-copy {
         color: var(--ink-secondary);

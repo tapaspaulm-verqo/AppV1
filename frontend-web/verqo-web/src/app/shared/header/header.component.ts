@@ -29,8 +29,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         </nav>
         <div class="actions">
           <a routerLink="/login" class="login-link">Log in</a>
-          <a routerLink="/business" class="btn btn-secondary">Hire talent</a>
-          <a routerLink="/signup/freelancer" class="btn btn-primary">Join as a freelancer</a>
+          <a routerLink="/business" class="btn btn-client-outline">Hire talent</a>
+          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
         </div>
       </div>
     </header>
@@ -106,7 +106,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       }
       @media (max-width: 560px) {
         .login-link,
-        .btn-secondary {
+        .btn-client-outline {
           display: none;
         }
       }
