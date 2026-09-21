@@ -378,6 +378,17 @@ import { RouterLink } from '@angular/router';
           grid-template-columns: 1fr;
         }
       }
+      /* At ~320px, the audience-card links' "white-space: nowrap" (kept
+         above so the trailing → stays glued to the sentence) makes the
+         link itself wider than the card, forcing the whole page into
+         horizontal scroll. Letting it wrap only at the very narrowest
+         widths fixes that without changing how it looks anywhere the
+         nowrap version actually fits. */
+      @media (max-width: 360px) {
+        .text-link {
+          white-space: normal;
+        }
+      }
     `,
   ],
 })

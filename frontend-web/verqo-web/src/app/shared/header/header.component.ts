@@ -105,9 +105,30 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         }
       }
       @media (max-width: 560px) {
-        .login-link,
-        .btn-client-outline {
+        /* Specificity note: plain .login-link/.btn-client-outline selectors
+           here used to lose the cascade to the unconditional, higher-
+           specificity ".actions .btn { display: inline-block; }" rule
+           above, so the outline button never actually hid — it silently
+           pushed the header (and the whole page) into horizontal overflow
+           on every phone-width screen. Scoping to .site-header raises
+           specificity above ".actions .btn" so this actually wins. */
+        .site-header .login-link,
+        .site-header .btn-client-outline {
           display: none;
+        }
+      }
+      /* At the narrowest common phone width (~320px, e.g. iPhone SE), even
+         the wordmark + single remaining CTA don't both fit on one line —
+         wrap rather than let the header force horizontal scroll on the
+         whole page. */
+      @media (max-width: 340px) {
+        .header-row {
+          flex-wrap: wrap;
+          row-gap: var(--space-2);
+        }
+        .site-header .actions {
+          width: 100%;
+          justify-content: flex-end;
         }
       }
     `,
