@@ -25,11 +25,11 @@ import { Component } from '@angular/core';
   styles: [
     `
       .placeholder-page {
-        padding: 64px 24px;
+        padding: var(--space-16) var(--space-6);
         max-width: 640px;
       }
       .subhead {
-        color: #444;
+        color: var(--ink-secondary);
         line-height: 1.6;
       }
     `,

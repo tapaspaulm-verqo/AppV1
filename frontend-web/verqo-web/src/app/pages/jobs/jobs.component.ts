@@ -25,7 +25,7 @@ import { ApiService, JobSummary } from '../../core/services/api.service';
   styles: [
     `
       .jobs-page {
-        padding: 64px 24px;
+        padding: var(--space-16) var(--space-6);
         max-width: 760px;
       }
       .job-list {
@@ -33,12 +33,12 @@ import { ApiService, JobSummary } from '../../core/services/api.service';
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: var(--space-4);
       }
       .job-card {
-        border: 1px solid var(--verqo-silver-light);
-        border-radius: 12px;
-        padding: 20px;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: var(--space-5);
       }
     `,
   ],

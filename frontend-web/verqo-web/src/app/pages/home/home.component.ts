@@ -52,44 +52,38 @@ import { RouterLink } from '@angular/router';
   styles: [
     `
       .hero {
-        padding: 96px 24px 64px;
+        padding: var(--space-16) var(--space-6) var(--space-12);
         max-width: 760px;
       }
       .subhead {
         font-size: 18px;
-        color: #444;
+        color: var(--ink-secondary);
         line-height: 1.6;
       }
       .cta-row {
         display: flex;
-        gap: 16px;
-        margin-top: 32px;
+        gap: var(--space-4);
+        margin-top: var(--space-8);
       }
       .cta-row a {
         text-decoration: none;
       }
       .problem-answer {
-        background: var(--verqo-silver-light);
+        background: var(--surface-200);
       }
       .grid-3 {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
+        gap: var(--space-6);
       }
       .grid-5 {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        gap: 24px;
-        margin-top: 24px;
+        gap: var(--space-6);
+        margin-top: var(--space-6);
       }
       .card {
-        background: var(--verqo-white);
-        padding: 28px;
-        border-radius: 12px;
-      }
-      .card-dark {
-        background: var(--verqo-black);
-        color: var(--verqo-white);
+        padding: var(--space-8);
       }
     `,
   ],

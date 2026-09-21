@@ -82,9 +82,18 @@ import { panValidator } from '../../core/validators/pan.validator';
         <h1>You're in</h1>
         <p class="subhead">Here's where your verification stands right now:</p>
         <ul class="status-list">
-          <li>PAN: <strong>{{ result()!.profile.panStatus }}</strong></li>
-          <li>Aadhaar: <strong>{{ result()!.profile.aadhaarStatus }}</strong></li>
-          <li>EPF active status: <strong>{{ result()!.profile.epfStatus }}</strong></li>
+          <li>
+            <span>PAN</span>
+            <span class="status-pill" [class]="pillClass(result()!.profile.panStatus)">{{ statusLabel(result()!.profile.panStatus) }}</span>
+          </li>
+          <li>
+            <span>Aadhaar</span>
+            <span class="status-pill" [class]="pillClass(result()!.profile.aadhaarStatus)">{{ statusLabel(result()!.profile.aadhaarStatus) }}</span>
+          </li>
+          <li>
+            <span>EPF active status</span>
+            <span class="status-pill" [class]="pillClass(result()!.profile.epfStatus)">{{ statusLabel(result()!.profile.epfStatus) }}</span>
+          </li>
         </ul>
         @if (!result()!.profile.isFullyVerified) {
           <p class="field-error">
@@ -99,36 +108,50 @@ import { panValidator } from '../../core/validators/pan.validator';
     `
       .form-page {
         max-width: 560px;
-        padding: 64px 24px;
+        padding: var(--space-16) var(--space-6);
       }
       .subhead {
-        color: #444;
+        color: var(--ink-secondary);
         line-height: 1.6;
       }
       .signup-form {
         display: flex;
         flex-direction: column;
-        gap: 4px;
-        margin-top: 32px;
+        gap: var(--space-1);
+        margin-top: var(--space-8);
       }
       label {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: var(--space-2);
         font-weight: 600;
         font-size: 14px;
-        margin-top: 16px;
+        margin-top: var(--space-4);
       }
       .optional {
         font-weight: 400;
-        color: var(--verqo-silver);
+        color: var(--silver);
       }
       button {
-        margin-top: 28px;
+        margin-top: var(--space-7, 28px);
       }
       .status-list {
-        margin-top: 24px;
-        line-height: 2;
+        list-style: none;
+        padding: 0;
+        margin-top: var(--space-6);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+      .status-list li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+        padding: var(--space-3) 0;
+        border-bottom: 1px solid var(--border-subtle);
+        font-weight: 600;
+        font-size: var(--text-body-size);
       }
     `,
   ],
@@ -156,6 +179,34 @@ export class FreelancerSignupComponent {
 
   get aadhaarControl() {
     return this.form.controls.aadhaarNumber;
+  }
+
+  /** Verification status pill styling — accent for verified/eligible states,
+   * warning while pending or under manual review, danger if ineligible. */
+  pillClass(status: string): string {
+    switch (status) {
+      case 'Eligible':
+        return 'status-pill--verified';
+      case 'Ineligible':
+        return 'status-pill--failed';
+      case 'NeedsReview':
+        return 'status-pill--review';
+      default:
+        return 'status-pill--pending';
+    }
+  }
+
+  statusLabel(status: string): string {
+    switch (status) {
+      case 'Eligible':
+        return 'Verified';
+      case 'Ineligible':
+        return 'Not verified';
+      case 'NeedsReview':
+        return 'In review';
+      default:
+        return 'Pending';
+    }
   }
 
   constructor(private readonly api: ApiService) {}
