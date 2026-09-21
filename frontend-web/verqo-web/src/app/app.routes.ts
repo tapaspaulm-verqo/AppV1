@@ -8,6 +8,10 @@ import { HomeComponent } from './pages/home/home.component';
 import { HowItWorksComponent } from './pages/how-it-works/how-it-works.component';
 import { JobDetailComponent } from './pages/job-detail/job-detail.component';
 import { JobsComponent } from './pages/jobs/jobs.component';
+import { LegalClientAgreementComponent } from './pages/legal-client-agreement/legal-client-agreement.component';
+import { LegalFreelancerAgreementComponent } from './pages/legal-freelancer-agreement/legal-freelancer-agreement.component';
+import { LegalPrivacyComponent } from './pages/legal-privacy/legal-privacy.component';
+import { LegalTermsComponent } from './pages/legal-terms/legal-terms.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
 import { TrustSafetyComponent } from './pages/trust-safety/trust-safety.component';
 import { ComingSoonComponent } from './shared/coming-soon/coming-soon.component';
@@ -111,24 +115,10 @@ export const routes: Routes = [
       blurb: 'Guides on freelancing, hiring and getting the most out of Verqo are coming.',
     },
   },
-  {
-    path: 'legal/terms',
-    component: ComingSoonComponent,
-    data: {
-      title: 'Terms of service',
-      blurb: "Verqo's terms of service are being finalized with legal counsel before publishing.",
-      note: 'Contract and fee terms already shown on Pricing and How it works reflect the current business plan.',
-    },
-  },
-  {
-    path: 'legal/privacy',
-    component: ComingSoonComponent,
-    data: {
-      title: 'Privacy policy',
-      blurb: "Verqo's privacy policy is being finalized before publishing.",
-      note: 'Note: PAN is validated by format and checksum; Aadhaar is checksum-validated and only its last 4 digits are ever stored.',
-    },
-  },
+  { path: 'legal/terms', component: LegalTermsComponent },
+  { path: 'legal/privacy', component: LegalPrivacyComponent },
+  { path: 'legal/freelancer-agreement', component: LegalFreelancerAgreementComponent },
+  { path: 'legal/client-agreement', component: LegalClientAgreementComponent },
 
   { path: '**', redirectTo: '' },
 ];

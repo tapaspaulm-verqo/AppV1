@@ -54,8 +54,10 @@ import { RouterLink } from '@angular/router';
           <h4>Resources</h4>
           <a routerLink="/help">Help center</a>
           <a routerLink="/resources">Blog</a>
-          <a routerLink="/legal/terms">Terms of service</a>
+          <a routerLink="/legal/terms">Terms of use</a>
           <a routerLink="/legal/privacy">Privacy policy</a>
+          <a routerLink="/legal/freelancer-agreement">Freelancer agreement</a>
+          <a routerLink="/legal/client-agreement">Client agreement</a>
         </nav>
       </div>
 
