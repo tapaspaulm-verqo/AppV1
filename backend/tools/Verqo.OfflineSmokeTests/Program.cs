@@ -136,6 +136,59 @@ catch (Verqo.Application.Freelancers.RegistrationValidationException ex)
 Check("registration rejects invalid PAN + Aadhaar with field-level errors", validationFailed);
 
 Console.WriteLine();
+Console.WriteLine("=== GSTIN validator ===");
+Check("valid-format GSTIN (27AAAPA1111A1Z5)", GstinValidator.Validate("27AAAPA1111A1Z5").IsValid);
+Check("valid-format GSTIN, lowercase + spaces normalized", GstinValidator.Validate(" 27aaapa1111a1z5 ").IsValid);
+Check("rejects wrong length", !GstinValidator.Validate("27AAAPA1111A1Z").IsValid);
+Check("rejects out-of-range state code (00)", !GstinValidator.Validate("00AAAPA1111A1Z5").IsValid);
+Check("rejects out-of-range state code (39)", !GstinValidator.Validate("39AAAPA1111A1Z5").IsValid);
+Check("rejects missing literal 'Z' in position 14", !GstinValidator.Validate("27AAAPA1111A1Y5").IsValid);
+Check("rejects an unrecognised embedded PAN holder-type code", !GstinValidator.Validate("27AAAXA1111A1Z5").IsValid);
+Check("rejects empty", !GstinValidator.Validate("").IsValid);
+Check("rejects null", !GstinValidator.Validate(null).IsValid);
+
+Console.WriteLine();
+Console.WriteLine("=== Client registration ===");
+var registerClientService = new Verqo.Application.Clients.RegisterClientService();
+
+var okClient = await registerClientService.RegisterAsync(new Verqo.Application.Clients.RegisterClientRequest(
+    Email: "hiring@example.com",
+    PasswordHash: "argon2id$fake-hash-for-test",
+    CompanyName: "Example Technologies Pvt Ltd",
+    Gstin: "27AAAPA1111A1Z5"));
+
+Check("registration succeeds with a valid company name + GSTIN", okClient.Profile.CompanyName == "Example Technologies Pvt Ltd");
+Check("GSTIN is normalized to uppercase", okClient.Profile.Gstin == "27AAAPA1111A1Z5");
+Check("new Client starts on the Standard plan", okClient.Profile.Plan == ClientPlan.Standard);
+Check("registered user has the Client role", okClient.User.Role == UserRole.Client);
+Check("registered user's email is lower-cased", okClient.User.Email == "hiring@example.com");
+
+var okClientNoGstin = await registerClientService.RegisterAsync(new Verqo.Application.Clients.RegisterClientRequest(
+    Email: "solo-founder@example.com",
+    PasswordHash: "x",
+    CompanyName: "Solo Founder LLP",
+    Gstin: null));
+Check("GSTIN is optional at registration", okClientNoGstin.Profile.Gstin == null);
+
+var clientValidationFailed = false;
+try
+{
+    await registerClientService.RegisterAsync(new Verqo.Application.Clients.RegisterClientRequest(
+        Email: "not-an-email",
+        PasswordHash: "x",
+        CompanyName: "",
+        Gstin: "not-a-gstin"));
+}
+catch (Verqo.Application.Clients.ClientRegistrationValidationException ex)
+{
+    clientValidationFailed =
+        ex.Errors.Any(e => e.Field == "email") &&
+        ex.Errors.Any(e => e.Field == "companyName") &&
+        ex.Errors.Any(e => e.Field == "gstin");
+}
+Check("registration rejects invalid email + missing company name + bad GSTIN", clientValidationFailed);
+
+Console.WriteLine();
 Console.WriteLine($"=== {passCount} passed, {failures.Count} failed ===");
 if (failures.Count > 0)
 {

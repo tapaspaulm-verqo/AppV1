@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Verqo.Application.Clients;
 using Verqo.Application.Freelancers;
 using Verqo.Application.Kyc;
 using Verqo.Application.Payments;
@@ -72,6 +73,10 @@ builder.Services.AddScoped<IPaymentGatewayAdapter, MockPaymentGatewayAdapter>();
 builder.Services.AddScoped(sp => new RegisterFreelancerService(
     sp.GetRequiredService<IKycVerificationService>(),
     aadhaarHashPepper));
+
+// Client registration has no external verification dependency yet (see
+// RegisterClientService remarks), so it's a plain scoped service.
+builder.Services.AddScoped<RegisterClientService>();
 
 // Kubernetes liveness/readiness probes (see deploy/helm/verqo/templates/api-deployment.yaml).
 builder.Services.AddHealthChecks()

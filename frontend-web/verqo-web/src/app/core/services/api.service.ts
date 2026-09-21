@@ -24,6 +24,22 @@ export interface RegisterFreelancerResponse {
   };
 }
 
+export interface RegisterClientPayload {
+  email: string;
+  password: string;
+  companyName: string;
+  gstin?: string;
+}
+
+export interface RegisterClientResponse {
+  userId: string;
+  profile: {
+    companyName: string;
+    gstin: string | null;
+    plan: string;
+  };
+}
+
 export interface JobSummary {
   id: string;
   title: string;
@@ -60,6 +76,10 @@ export class ApiService {
 
   registerFreelancer(payload: RegisterFreelancerPayload): Observable<RegisterFreelancerResponse> {
     return this.http.post<RegisterFreelancerResponse>(`${this.baseUrl}/freelancers/register`, payload);
+  }
+
+  registerClient(payload: RegisterClientPayload): Observable<RegisterClientResponse> {
+    return this.http.post<RegisterClientResponse>(`${this.baseUrl}/clients/register`, payload);
   }
 
   listOpenJobs(): Observable<JobSummary[]> {
