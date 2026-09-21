@@ -34,6 +34,12 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/business" class="btn btn-secondary">See what Verqo offers businesses</a>
             <a routerLink="/pricing" class="btn btn-client">View pricing</a>
           </div>
+          <p class="legal-note">
+            Registering as a Client will mean agreeing to Verqo's
+            <a routerLink="/legal/terms">Terms of Use</a>,
+            <a routerLink="/legal/privacy">Privacy Policy</a> and
+            <a routerLink="/legal/client-agreement">Client Agreement</a>.
+          </p>
         </div>
       </div>
     </section>
@@ -73,6 +79,17 @@ import { RouterLink } from '@angular/router';
       }
       .actions a {
         text-decoration: none;
+      }
+      .legal-note {
+        color: var(--silver);
+        font-size: var(--text-label-size);
+        line-height: 1.6;
+        margin-top: var(--space-6);
+      }
+      .legal-note a {
+        color: var(--ink-secondary);
+        font-weight: 600;
+        text-decoration: underline;
       }
     `,
   ],

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ApiService, RegisterFreelancerResponse } from '../../core/services/api.service';
 import { aadhaarValidator } from '../../core/validators/aadhaar.validator';
 import { panValidator } from '../../core/validators/pan.validator';
@@ -8,7 +9,7 @@ import { panValidator } from '../../core/validators/pan.validator';
 @Component({
   selector: 'app-freelancer-signup',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <section class="container form-page">
       @if (!result()) {
@@ -78,6 +79,13 @@ import { panValidator } from '../../core/validators/pan.validator';
           <button type="submit" class="btn btn-accent" [disabled]="form.invalid || submitting()">
             {{ submitting() ? 'Verifying…' : 'Create freelancer account' }}
           </button>
+
+          <p class="legal-note">
+            By creating an account, you agree to Verqo's
+            <a routerLink="/legal/terms">Terms of Use</a>,
+            <a routerLink="/legal/privacy">Privacy Policy</a> and
+            <a routerLink="/legal/freelancer-agreement">Freelancer Agreement</a>.
+          </p>
         </form>
       } @else {
         <h1>You're in</h1>
@@ -135,6 +143,18 @@ import { panValidator } from '../../core/validators/pan.validator';
       }
       button {
         margin-top: var(--space-7, 28px);
+      }
+      .legal-note {
+        color: var(--silver);
+        font-size: var(--text-label-size);
+        font-weight: 400;
+        line-height: 1.6;
+        margin-top: var(--space-4);
+      }
+      .legal-note a {
+        color: var(--ink-secondary);
+        font-weight: 600;
+        text-decoration: underline;
       }
       .status-list {
         list-style: none;
