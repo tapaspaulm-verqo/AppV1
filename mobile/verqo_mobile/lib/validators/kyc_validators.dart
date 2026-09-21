@@ -86,3 +86,42 @@ class AadhaarValidator {
 
   static String last4(String validatedAadhaar) => validatedAadhaar.substring(validatedAadhaar.length - 4);
 }
+
+/// GSTIN structural check — the third mirror of
+/// `Verqo.Application.Kyc.GstinValidator` (C#) and the Angular app's
+/// `gstin.validator.ts`. GSTIN is optional at Client registration, so (like
+/// both of those) this only rejects a value that's present but malformed;
+/// it never enforces "required". Deliberately does NOT recompute the mod-36
+/// check digit — see the C# validator's remarks for why (risk of a wrong
+/// hand-rolled checksum silently rejecting valid GSTINs, and GSTIN is
+/// optional at registration anyway). The API re-validates; this is UX only.
+class GstinValidator {
+  static final _format = RegExp(r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$');
+  static const _validPanHolderTypeCodes = {'P', 'C', 'H', 'A', 'B', 'G', 'J', 'L', 'F', 'T'};
+
+  static ValidationOutcome validate(String? gstin) {
+    if (gstin == null || gstin.trim().isEmpty) {
+      return const ValidationOutcome(true); // optional — nothing to validate
+    }
+    final normalized = gstin.trim().toUpperCase();
+    if (!_format.hasMatch(normalized)) {
+      return const ValidationOutcome(false,
+          "GSTIN must be 15 characters: a 2-digit state code, the business's 10-character PAN, an entity number, 'Z', and a check digit.");
+    }
+    final stateCode = int.parse(normalized.substring(0, 2));
+    if (stateCode < 1 || stateCode > 38) {
+      return const ValidationOutcome(false, 'The first two digits of a GSTIN must be a valid state code (01–38).');
+    }
+    // Position 6 (index 5) of the GSTIN is the PAN's holder-type code
+    // (state code = indices 0-1, embedded PAN = indices 2-11, and a PAN's
+    // holder-type code sits at its own 4th character = index 3 of that
+    // 10-char PAN, i.e. overall index 2 + 3 = 5).
+    if (!_validPanHolderTypeCodes.contains(normalized[5])) {
+      return const ValidationOutcome(
+          false, 'The PAN embedded in the GSTIN (characters 3–12) is not validly formatted.');
+    }
+    return const ValidationOutcome(true);
+  }
+
+  static String normalize(String gstin) => gstin.trim().toUpperCase();
+}

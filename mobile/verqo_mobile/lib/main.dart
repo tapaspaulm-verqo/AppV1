@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/root_shell.dart';
 import 'theme/verqo_theme.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class VerqoApp extends StatelessWidget {
       title: 'Verqo',
       debugShowCheckedModeBanner: false,
       theme: VerqoTheme.light(),
-      home: const HomeScreen(),
+      home: const RootShell(),
     );
   }
 }

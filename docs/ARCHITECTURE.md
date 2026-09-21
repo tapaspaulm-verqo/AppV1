@@ -114,9 +114,13 @@ so switching mobile frameworks later doesn't touch the backend at all.
 
 `mobile/verqo_mobile` — Flutter project structure (`lib/theme`,
 `lib/services/api_client.dart`, `lib/validators/kyc_validators.dart`,
-`lib/screens/`). Written as source only — see §7 for why it couldn't be
-built in this sandbox, and `mobile/verqo_mobile/README.md` for how to pick
-it up with a real Flutter install.
+`lib/screens/`, `test/`). Covers the three flows the backend actually
+supports today: freelancer registration (PAN/Aadhaar/EPF UAN), client
+registration (company name + optional GSTIN), and browsing open roles —
+behind a bottom-nav app shell, with unit tests for the validators and
+widget tests for navigation. Written as source only — see §7 for why it
+couldn't be built in this sandbox, and `mobile/verqo_mobile/README.md` for
+how to pick it up with a real Flutter install (or just push — see §7.2).
 
 ## 5. PAN, Aadhaar and EPF verification
 
@@ -223,7 +227,7 @@ here versus what's written correctly but unverified:
 | `Verqo.Application.Tests` (xunit) | Source-complete, **not run here** (xunit needs `Microsoft.NET.Test.Sdk` from NuGet). CI (below) is where this actually runs. | `api.nuget.org` isn't reachable from this sandbox. Restores and runs normally in any ordinary dev/CI environment — that's the suite to trust and extend. |
 | `Verqo.Infrastructure` (EF Core/Npgsql), `Verqo.Api` (ASP.NET Core, JWT, Swagger) | Source-complete, idiomatic, **not built here** — same NuGet restriction (`Microsoft.EntityFrameworkCore`, `Npgsql.EntityFrameworkCore.PostgreSQL`, `Microsoft.AspNetCore.Authentication.JwtBearer`, `Swashbuckle.AspNetCore` are all NuGet-only). Compensated with a manual line-by-line review pass, which caught and fixed two real compile errors the compiler couldn't catch here (see below). | Will restore and build the moment this solution is opened anywhere with normal NuGet access — CI does this on every push. |
 | Angular web app | **Builds.** `ng build` succeeds (1.61 MB initial bundle, dev config). | npm/Angular CLI are reachable here. |
-| Flutter mobile app | Source-complete Dart, **not built or analyzed here** — the Flutter SDK couldn't be installed (`storage.googleapis.com` unreachable). | Run `flutter create .` in `mobile/verqo_mobile` with a real install to generate the platform folders and verify. |
+| Flutter mobile app | Source-complete Dart (freelancer signup, client signup, jobs list, validators incl. a new GSTIN check, unit + widget tests), **not built or analyzed here** — the Flutter SDK, `pub.dev`, and `dl.google.com`/`maven.google.com` are all unreachable from this sandbox (confirmed by direct probe, not just the earlier `storage.googleapis.com` finding). | `.github/workflows/flutter.yml` builds it for real on push — see §7.2. Or run `flutter create --platforms=android .` in `mobile/verqo_mobile` with a real install. |
 | Helm chart | Structurally validated (Go-template directives stripped, remainder parsed as YAML — every file parses cleanly) but **not run through `helm lint`/`helm template`** — the `helm` binary's install path (`proxy.golang.org` via `go install`) was also unreachable from this sandbox. | Run `helm lint deploy/helm/verqo` for real before a production install. |
 
 A `NuGet.Config` at `backend/` clears the default package source so the
@@ -274,6 +278,40 @@ Two things changed to make this concrete rather than just documented:
    the fixes introduced no regression. The remaining build failures for
    `Verqo.Infrastructure`/`Verqo.Api`/`Verqo.Application.Tests` in this
    sandbox are 100% `NU1100` restore errors (network), not code errors.
+
+### 7.2 Getting the Flutter app actually building
+
+The same shape of problem as §7.1, for a different set of blocked hosts.
+Confirmed directly from this sandbox: `git clone` of the Flutter SDK itself
+from `github.com/flutter/flutter` **works** (237 MB, no errors), but
+running `flutter --version` from that clone fails immediately — its first
+run downloads a Dart SDK snapshot from `storage.googleapis.com`, which is
+blocked (`CONNECT tunnel failed, response 403`). `pub.dev` (needed for
+`flutter pub get`) and `dl.google.com`/`maven.google.com` (needed for the
+Android Gradle Plugin and AndroidX) are blocked the same way. So even a
+manually-obtained Flutter SDK couldn't get past the first command here —
+this isn't a workaround-able gap, the toolchain genuinely cannot run in
+this sandbox.
+
+**`.github/workflows/flutter.yml`** is the real build: checkout →
+`subosito/flutter-action@v2` (stable channel, unrestricted network) →
+`flutter create --platforms=android .` (generates `android/` fresh every
+run — see `mobile/verqo_mobile/README.md` for why that folder isn't
+committed) → `flutter pub get` → `flutter analyze` → `flutter test` →
+`flutter build apk --release`, uploading the APK as a workflow artifact.
+Fires on every push/PR touching `mobile/**`, same trigger shape as
+`dotnet.yml`.
+
+Compensated with a manual review pass, since nothing here could be
+analyzed or run. It caught one real cross-layer bug: `JobsController.List`
+(`Verqo.Api`) was projecting `Job.Channel` — an `EngagementChannel` enum —
+without a `.ToString()`. No `JsonStringEnumConverter` is registered for
+this API, so System.Text.Json's default would have serialized it as a raw
+integer (`0`/`1`) rather than `"B2B"`/`"B2C"`, silently breaking any client
+parsing it as a string (this app's `JobSummary.channel`, and in principle
+the Angular jobs page too) — `FreelancersController` and `ClientsController`
+already convert their own enum-backed fields with `.ToString()`; `JobsController`
+just hadn't been brought in line. Fixed as part of this pass.
 
 ## 8. Kubernetes / containers
 

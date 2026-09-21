@@ -52,6 +52,56 @@ class ApiClient {
     final list = jsonDecode(response.body) as List<dynamic>;
     return list.map((j) => JobSummary.fromJson(j as Map<String, dynamic>)).toList();
   }
+
+  Future<RegisterClientResponse> registerClient({
+    required String email,
+    required String password,
+    required String companyName,
+    String? gstin,
+  }) async {
+    final response = await _http.post(
+      Uri.parse('$_baseUrl/clients/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'companyName': companyName,
+        if (gstin != null && gstin.isNotEmpty) 'gstin': gstin,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return RegisterClientResponse.fromJson(jsonDecode(response.body));
+    }
+    throw ApiException(response.statusCode, response.body);
+  }
+}
+
+/// Both `FreelancersController` and `ClientsController` return a
+/// validation failure as `BadRequest(new ValidationProblemDetails(errors))`
+/// — a JSON body shaped `{ "errors": { "field": ["message", ...], ... } }`.
+/// This flattens that into one readable string for display, the same way
+/// the Angular app's `err.error.errors` handling does. Falls back to a
+/// generic message for anything not in that shape (a 500, a network-level
+/// failure, an unexpected body).
+String friendlyApiErrorMessage(
+  ApiException error, {
+  String fallback = 'Something went wrong — please check your details and try again.',
+}) {
+  try {
+    final decoded = jsonDecode(error.body);
+    if (decoded is Map<String, dynamic> && decoded['errors'] is Map) {
+      final errors = decoded['errors'] as Map;
+      final messages = <String>[
+        for (final value in errors.values)
+          if (value is List) ...value.map((m) => m.toString()),
+      ];
+      if (messages.isNotEmpty) return messages.join(' ');
+    }
+  } catch (_) {
+    // Body wasn't the expected JSON shape — fall through to the fallback.
+  }
+  return fallback;
 }
 
 class ApiException implements Exception {
@@ -93,14 +143,55 @@ class JobSummary {
   final String id;
   final String title;
   final String roleCategory;
+
+  /// "B2B" or "B2C" — see Verqo.Domain.Enums.EngagementChannel. Not a
+  /// pricing model (that's per-Milestone), just who the Client is.
   final String channel;
 
-  JobSummary({required this.id, required this.title, required this.roleCategory, required this.channel});
+  /// Minor units (paise). Either or both may be null — a Job can be posted
+  /// without a budget range.
+  final int? budgetMinorMin;
+  final int? budgetMinorMax;
+
+  JobSummary({
+    required this.id,
+    required this.title,
+    required this.roleCategory,
+    required this.channel,
+    this.budgetMinorMin,
+    this.budgetMinorMax,
+  });
 
   factory JobSummary.fromJson(Map<String, dynamic> json) => JobSummary(
         id: json['id'] as String,
         title: json['title'] as String,
         roleCategory: json['roleCategory'] as String,
         channel: json['channel'] as String,
+        budgetMinorMin: json['budgetMinorMin'] as int?,
+        budgetMinorMax: json['budgetMinorMax'] as int?,
       );
+}
+
+class RegisterClientResponse {
+  final String userId;
+  final String companyName;
+  final String? gstin;
+  final String plan;
+
+  RegisterClientResponse({
+    required this.userId,
+    required this.companyName,
+    this.gstin,
+    required this.plan,
+  });
+
+  factory RegisterClientResponse.fromJson(Map<String, dynamic> json) {
+    final profile = json['profile'] as Map<String, dynamic>;
+    return RegisterClientResponse(
+      userId: json['userId'] as String,
+      companyName: profile['companyName'] as String,
+      gstin: profile['gstin'] as String?,
+      plan: profile['plan'] as String,
+    );
+  }
 }

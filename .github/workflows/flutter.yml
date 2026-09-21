@@ -1,0 +1,74 @@
+name: Flutter build & test (Android)
+
+# Sets up a real Flutter SDK, generates the android/ platform folder, and
+# builds a release APK — the first place this actually happens end to end.
+# The sandbox this mobile scaffold was written in could not do any of this:
+# its network egress blocks storage.googleapis.com (the Flutter SDK's own
+# download host, and the Dart SDK snapshot Flutter's tooling fetches on
+# first run), pub.dev (package resolution) and dl.google.com/maven.google.com
+# (the Android Gradle Plugin and AndroidX dependencies) — confirmed by
+# probing each host directly (all refused), not a transient failure. See
+# docs/ARCHITECTURE.md §7 and mobile/verqo_mobile/README.md. A normal GitHub
+# Actions runner has unrestricted network access, so this workflow is where
+# mobile/verqo_mobile actually gets analyzed, tested and built — push this
+# repo (or open a PR) and check the Actions tab, same as .github/workflows/dotnet.yml
+# already does for the backend.
+#
+# android/ (and ios/) aren't committed to this repo — they're pure Flutter-
+# generated platform boilerplate (including binary files like the Gradle
+# wrapper jar) with no custom native code in this project yet, so hand-
+# authoring them inside a sandbox that can't run `flutter create` or
+# `./gradlew` to verify them would risk committing a subtly wrong,
+# unverifiable native build. `flutter create .` below regenerates them
+# fresh on every run instead — the same command the README already tells a
+# developer with a real Flutter install to run locally.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mobile/**"
+      - ".github/workflows/flutter.yml"
+  pull_request:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/flutter.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/verqo_mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter --version
+
+      - name: Generate the android/ platform folder
+        run: flutter create --platforms=android --org com.verqo .
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Static analysis
+        run: flutter analyze
+
+      - name: Run widget/unit tests
+        run: flutter test
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Upload the APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: verqo-android-release
+          path: mobile/verqo_mobile/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error

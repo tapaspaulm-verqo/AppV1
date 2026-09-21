@@ -43,8 +43,10 @@ class _FreelancerSignupScreenState extends State<FreelancerSignupScreen> {
         epfUan: _epfUan.text.trim().isEmpty ? null : _epfUan.text.trim(),
       );
       setState(() => _result = result);
-    } catch (e) {
-      setState(() => _errorMessage = 'Something went wrong verifying your details — please check them and try again.');
+    } on ApiException catch (e) {
+      setState(() => _errorMessage = friendlyApiErrorMessage(e));
+    } catch (_) {
+      setState(() => _errorMessage = "Couldn't reach Verqo — check your connection and try again.");
     } finally {
       setState(() => _submitting = false);
     }
@@ -136,6 +138,11 @@ class _FreelancerSignupScreenState extends State<FreelancerSignupScreen> {
           ElevatedButton(
             onPressed: _submitting ? null : _submit,
             child: Text(_submitting ? 'Verifying…' : 'Create freelancer account'),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            "By creating an account, you agree to Verqo's Terms of Use, Privacy Policy and Freelancer Agreement.",
+            style: TextStyle(fontSize: 12, color: Colors.black54),
           ),
         ],
       ),

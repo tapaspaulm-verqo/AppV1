@@ -22,7 +22,16 @@ public class JobsController(VerqoDbContext db) : ControllerBase
                 j.RoleCategory,
                 j.BudgetMinorMin,
                 j.BudgetMinorMax,
-                j.Channel,
+                // .ToString() deliberately, not the raw enum: no
+                // JsonStringEnumConverter is registered for this API, so
+                // System.Text.Json's default is to serialize an unconverted
+                // enum as its integer value, not "B2B"/"B2C" — which would
+                // silently break every client (Angular's `channel: string`,
+                // and Flutter's `JobSummary.channel` in api_client.dart)
+                // expecting a string. FreelancersController and
+                // ClientsController already convert their enum-backed
+                // status/plan fields the same way; this brings Jobs in line.
+                Channel = j.Channel.ToString(),
                 j.CreatedAt,
             })
             .ToListAsync(ct);
