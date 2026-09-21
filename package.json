@@ -1,0 +1,18 @@
+{
+  "name": "verqo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "frontend-web/verqo-web"
+  ],
+  "scripts": {
+    "build:frontend": "npm run build --workspace=verqo-web",
+    "build": "npm run build:frontend && node -e \"import('fs').then(fs => fs.cpSync('frontend-web/verqo-web/dist/verqo-web/browser', 'dist', {recursive:true}))\"",
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
