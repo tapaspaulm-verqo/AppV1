@@ -1,0 +1,55 @@
+name: .NET build & test
+
+# Restores, builds, and tests the whole solution — including the
+# NuGet-dependent projects (Verqo.Infrastructure, Verqo.Api,
+# Verqo.Application.Tests) that could not be restored inside the sandbox
+# this scaffold was built in (its network egress blocks api.nuget.org and
+# every NuGet mirror tried — see docs/ARCHITECTURE.md §7). A normal GitHub
+# Actions runner has unrestricted NuGet access, so this is the first place
+# those projects actually get verified end to end. Push this repo (or open
+# a PR) and check the Actions tab.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/dotnet.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/dotnet.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      # The scaffold's NuGet.Config clears package sources (needed so the
+      # dependency-free projects could restore inside the original build
+      # sandbox — see that file's own comment). A real environment restores
+      # normally from nuget.org, so it's removed here rather than asking
+      # every contributor to delete it locally.
+      - name: Remove sandbox-only NuGet.Config
+        run: rm -f NuGet.Config
+
+      - name: Restore
+        run: dotnet restore Verqo.sln
+
+      - name: Build
+        run: dotnet build Verqo.sln --no-restore --configuration Release
+
+      - name: Run xunit tests (Verqo.Application.Tests)
+        run: dotnet test tests/Verqo.Application.Tests/Verqo.Application.Tests.csproj --no-build --configuration Release --logger "console;verbosity=normal"
+
+      - name: Run the offline smoke-test suite too (belt and suspenders)
+        run: dotnet run --project tools/Verqo.OfflineSmokeTests --configuration Release

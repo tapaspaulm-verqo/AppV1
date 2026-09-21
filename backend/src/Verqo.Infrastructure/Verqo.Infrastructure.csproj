@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!--
+    Needs NuGet access to restore (confirmed blocked from every angle in the
+    sandbox that produced this scaffold — see docs/ARCHITECTURE.md §7 for
+    the full list of hosts tried). Source is complete and idiomatic.
+    Versions are floating (8.0.*) rather than pinned to an exact patch,
+    specifically so restore doesn't fail if the exact patch guessed here
+    doesn't exist — `dotnet restore` picks the latest matching 8.0.x the
+    first time it runs somewhere with real NuGet access, then records the
+    resolved version in the (git-ignored) obj/project.assets.json as usual.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.*" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Verqo.Domain\Verqo.Domain.csproj" />
+    <ProjectReference Include="..\Verqo.Application\Verqo.Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,284 @@
+<title>Verqo Stack Architecture</title>
+<style>
+  :root{
+    --bg:#f5f6f3;
+    --panel:#ffffff;
+    --panel-alt:#eef1ee;
+    --border:#cfd6d0;
+    --border-strong:#aab4ac;
+    --ink:#1b2320;
+    --ink-dim:#5c655e;
+    --accent:#1f6f5c;
+    --accent-soft:#e4efec;
+    --mock:#a8641f;
+    --mock-soft:#f5ead9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12171a;
+      --panel:#1a2124;
+      --panel-alt:#1c2825;
+      --border:#33403b;
+      --border-strong:#4a5a53;
+      --ink:#e9ece9;
+      --ink-dim:#9aa39c;
+      --accent:#57ddba;
+      --accent-soft:rgba(87,221,186,0.12);
+      --mock:#e3a75c;
+      --mock-soft:rgba(227,167,92,0.14);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12171a;
+    --panel:#1a2124;
+    --panel-alt:#1c2825;
+    --border:#33403b;
+    --border-strong:#4a5a53;
+    --ink:#e9ece9;
+    --ink-dim:#9aa39c;
+    --accent:#57ddba;
+    --accent-soft:rgba(87,221,186,0.12);
+    --mock:#e3a75c;
+    --mock-soft:rgba(227,167,92,0.14);
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter",-apple-system,"Segoe UI",sans-serif;
+    padding-inline:20px;
+    padding-block:36px 56px;
+  }
+  .page{ max-width:880px; margin:0 auto; }
+  code, .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
+
+  header.hero{ margin-bottom:28px; }
+  .eyebrow{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(26px,4.5vw,34px);
+    line-height:1.15;
+    margin:0 0 10px;
+    text-wrap:balance;
+    font-weight:700;
+  }
+  .dek{
+    font-size:15px;
+    line-height:1.55;
+    color:var(--ink-dim);
+    max-width:62ch;
+    margin:0;
+  }
+
+  figure{ margin:32px 0 8px; }
+  .diagram-scroll{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:8px;
+  }
+  svg.stack-diagram{
+    width:1040px;
+    max-width:none;
+    height:auto;
+    display:block;
+    font-family:"Inter",sans-serif;
+  }
+  figcaption{
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--ink-dim);
+    margin-top:14px;
+    max-width:66ch;
+  }
+
+  .tiers{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin-top:36px;
+  }
+  @media (max-width:640px){
+    .tiers{ grid-template-columns:1fr; }
+  }
+  .tier-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px 18px;
+  }
+  .tier-card h2{
+    font-size:13px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 8px;
+    font-weight:600;
+  }
+  .tier-card p{
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--ink);
+    margin:0;
+  }
+  .tier-card p code{ font-size:12px; color:var(--ink-dim); }
+
+  footer.note{
+    margin-top:30px;
+    font-size:12.5px;
+    color:var(--ink-dim);
+    border-top:1px solid var(--border);
+    padding-top:16px;
+  }
+</style>
+
+<div class="page">
+  <header class="hero">
+    <p class="eyebrow">Verqo · v2a rebuild</p>
+    <h1>One API, three clients, a boundary between what's real and what's mocked</h1>
+    <p class="dek">Angular and Flutter both call a single .NET 8 API inside Kubernetes. Inside that API, dependencies only point inward toward Domain — which is also why parts of this codebase could be compiled and tested without network access, and parts couldn't.</p>
+  </header>
+
+  <figure>
+    <div class="diagram-scroll">
+      <svg class="stack-diagram" viewBox="0 0 1040 860" role="img" aria-label="Angular web, Android and iOS clients send HTTPS/JWT requests through a Kubernetes ingress, which routes static assets to Verqo.Web pods and /api/v1 traffic to Verqo.Api pods. Inside the API pods, Verqo.Api depends on Verqo.Infrastructure, which depends on Verqo.Application, which depends on Verqo.Domain — dependencies point inward. Infrastructure reads and writes a managed PostgreSQL database over EF Core and Npgsql, and separately calls a mocked KYC, EPF and payment adapter interface that stands in for real vendors until v2a.">
+        <defs>
+          <marker id="arrow-ink" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--ink-dim)"></path>
+          </marker>
+          <marker id="arrow-accent" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--accent)"></path>
+          </marker>
+          <marker id="arrow-mock" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+            <path d="M0,0 L9,4.5 L0,9 z" fill="var(--mock)"></path>
+          </marker>
+        </defs>
+
+        <!-- legend -->
+        <line x1="738" y1="16" x2="772" y2="16" stroke="var(--accent)" stroke-width="3"></line>
+        <text x="780" y="20" font-size="11.5" fill="var(--ink-dim)">real &amp; verified today</text>
+        <line x1="738" y1="34" x2="772" y2="34" stroke="var(--mock)" stroke-width="3" stroke-dasharray="6,4"></line>
+        <text x="780" y="38" font-size="11.5" fill="var(--ink-dim)">mocked — real vendor in v2a</text>
+
+        <!-- client tier -->
+        <g>
+          <rect x="40" y="54" width="300" height="90" rx="8" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+          <text x="190" y="90" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">Angular 18 — Web App</text>
+          <text x="190" y="110" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">standalone components, reactive forms</text>
+          <text x="190" y="126" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">served as a static SPA build</text>
+
+          <rect x="370" y="54" width="300" height="90" rx="8" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+          <text x="520" y="90" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">Android App</text>
+          <text x="520" y="110" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">Flutter · Dart</text>
+          <text x="520" y="126" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">shares one codebase with iOS</text>
+
+          <rect x="700" y="54" width="300" height="90" rx="8" fill="var(--panel)" stroke="var(--border-strong)"></rect>
+          <text x="850" y="90" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">iOS App</text>
+          <text x="850" y="110" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">Flutter · Dart</text>
+          <text x="850" y="126" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">shares one codebase with Android</text>
+        </g>
+
+        <!-- arrows to ingress -->
+        <line x1="190" y1="144" x2="190" y2="212" stroke="var(--ink-dim)" stroke-width="1.6" marker-end="url(#arrow-ink)"></line>
+        <line x1="520" y1="144" x2="520" y2="212" stroke="var(--ink-dim)" stroke-width="1.6" marker-end="url(#arrow-ink)"></line>
+        <line x1="850" y1="144" x2="850" y2="212" stroke="var(--ink-dim)" stroke-width="1.6" marker-end="url(#arrow-ink)"></line>
+        <text x="530" y="182" text-anchor="middle" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="var(--ink-dim)">HTTPS · JSON · JWT bearer</text>
+
+        <!-- ingress -->
+        <rect x="40" y="214" width="960" height="56" rx="8" fill="var(--panel-alt)" stroke="var(--border-strong)"></rect>
+        <text x="520" y="238" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)">Kubernetes Ingress</text>
+        <text x="520" y="256" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">TLS termination · host/path routing</text>
+
+        <!-- cluster boundary -->
+        <rect x="40" y="300" width="960" height="410" rx="10" fill="none" stroke="var(--border-strong)" stroke-width="1.6" stroke-dasharray="7,5"></rect>
+        <text x="60" y="322" font-size="12" font-family="IBM Plex Mono, monospace" fill="var(--ink-dim)">Kubernetes cluster — Helm chart deploy/helm/verqo</text>
+
+        <!-- ingress to pods -->
+        <line x1="220" y1="270" x2="220" y2="350" stroke="var(--ink-dim)" stroke-width="1.6" marker-end="url(#arrow-ink)"></line>
+        <text x="230" y="312" font-size="11" fill="var(--ink-dim)">/ → static assets</text>
+        <line x1="695" y1="270" x2="695" y2="350" stroke="var(--ink-dim)" stroke-width="1.6" marker-end="url(#arrow-ink)"></line>
+        <text x="705" y="312" font-size="11" fill="var(--ink-dim)">/api/v1/* → JSON</text>
+
+        <!-- web pods -->
+        <rect x="80" y="350" width="280" height="260" rx="8" fill="var(--panel)" stroke="var(--border)"></rect>
+        <text x="220" y="380" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--ink)">Verqo.Web pods</text>
+        <text x="220" y="400" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">Nginx — Angular production build</text>
+        <text x="220" y="418" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">HPA: 2–6 replicas</text>
+        <text x="220" y="592" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">frontend-web/verqo-web/Dockerfile</text>
+
+        <!-- api pods -->
+        <rect x="430" y="350" width="530" height="340" rx="8" fill="var(--panel)" stroke="var(--border)"></rect>
+        <text x="695" y="376" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--ink)">Verqo.Api pods</text>
+        <text x="695" y="394" text-anchor="middle" font-size="11.5" fill="var(--ink-dim)">HPA: 2–8 replicas</text>
+
+        <!-- clean architecture layer stack -->
+        <rect x="460" y="410" width="470" height="50" rx="6" fill="var(--accent-soft)" stroke="var(--border-strong)"></rect>
+        <text x="695" y="430" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Verqo.Api</text>
+        <text x="695" y="446" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">controllers · JWT auth · Swagger · DI wiring</text>
+
+        <rect x="460" y="470" width="470" height="50" rx="6" fill="var(--accent-soft)" stroke="var(--border-strong)"></rect>
+        <text x="695" y="490" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Verqo.Infrastructure</text>
+        <text x="695" y="506" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">EF Core + Npgsql · adapter implementations</text>
+
+        <rect x="460" y="530" width="470" height="50" rx="6" fill="var(--panel-alt)" stroke="var(--border-strong)"></rect>
+        <text x="695" y="550" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Verqo.Application</text>
+        <text x="695" y="566" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">PAN/Aadhaar/EPF rules · fees · use-cases</text>
+
+        <rect x="460" y="590" width="470" height="50" rx="6" fill="var(--panel-alt)" stroke="var(--border-strong)"></rect>
+        <text x="695" y="610" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">Verqo.Domain</text>
+        <text x="695" y="626" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">entities &amp; enums — zero dependencies</text>
+
+        <line x1="945" y1="415" x2="945" y2="633" stroke="var(--ink-dim)" stroke-width="1.4" marker-end="url(#arrow-ink)"></line>
+        <text x="957" y="525" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)" transform="rotate(90 957 525)">depends on ↓</text>
+
+        <text x="695" y="658" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">Application + Domain ship zero NuGet packages —</text>
+        <text x="695" y="674" text-anchor="middle" font-size="10.5" fill="var(--ink-dim)">the only two layers this build could compile &amp; test offline</text>
+
+        <!-- arrows out to external systems -->
+        <line x1="560" y1="690" x2="300" y2="738" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#arrow-accent)"></line>
+        <text x="430" y="712" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--accent)">EF Core + Npgsql</text>
+
+        <line x1="850" y1="690" x2="760" y2="738" stroke="var(--mock)" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#arrow-mock)"></line>
+        <text x="860" y="712" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--mock)">adapter interfaces</text>
+
+        <!-- postgres -->
+        <rect x="80" y="740" width="420" height="90" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.6"></rect>
+        <text x="290" y="768" text-anchor="middle" font-size="13.5" font-weight="600" fill="var(--ink)">Managed PostgreSQL (HA)</text>
+        <text x="290" y="788" text-anchor="middle" font-size="11" fill="var(--ink-dim)">Cloud SQL · RDS · Azure Flexible Server</text>
+        <text x="290" y="806" text-anchor="middle" font-size="11" fill="var(--ink-dim)">automatic failover, backups, PITR</text>
+
+        <!-- mocked integrations -->
+        <rect x="540" y="740" width="420" height="90" rx="8" fill="var(--mock-soft)" stroke="var(--mock)" stroke-width="1.6" stroke-dasharray="7,5"></rect>
+        <text x="750" y="764" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)">External integrations — mocked for v2a</text>
+        <text x="750" y="784" text-anchor="middle" font-size="11" fill="var(--ink-dim)">KYC vendor · EPFO UAN check · payment gateway / escrow</text>
+        <text x="750" y="802" text-anchor="middle" font-size="11" fill="var(--ink-dim)">swap the implementation — no controller changes</text>
+      </svg>
+    </div>
+    <figcaption>Every client — the Angular web app and the two Flutter mobile builds — calls one .NET API through a Kubernetes ingress that routes by path. Inside the API pod, dependencies only point inward: Api → Infrastructure → Application → Domain, which is also why Application and Domain were the only layers this build could actually compile and run inside a network-locked environment. Infrastructure reads and writes a real managed Postgres over EF Core; the PAN/Aadhaar/EPF and payment checks instead go through a swappable adapter interface that's mocked until a licensed vendor is contracted for v2a.</figcaption>
+  </figure>
+
+  <div class="tiers">
+    <div class="tier-card">
+      <h2>Client tier</h2>
+      <p>Angular 18 (standalone components) builds to static assets served by Nginx. Android and iOS ship from one Flutter/Dart codebase, calling the same <code>/api/v1</code> surface as the browser — no client-specific backend logic anywhere.</p>
+    </div>
+    <div class="tier-card">
+      <h2>Kubernetes runtime</h2>
+      <p>Both pod sets scale independently via HPA. Images are built and the NuGet-dependent layers (<code>Verqo.Infrastructure</code>, <code>Verqo.Api</code>, the xunit suite) restored and tested by GitHub Actions CI before a <code>helm upgrade</code> ships a release here.</p>
+    </div>
+    <div class="tier-card">
+      <h2>Data &amp; external tier</h2>
+      <p>No database runs inside the cluster — <code>deploy/helm/verqo</code> only references an external connection string. Aadhaar is never stored in full: last-4 plus a salted hash, per the Aadhaar Act's storage restriction.</p>
+    </div>
+  </div>
+
+  <footer class="note">Full rationale and the sandbox-verification status of each layer: <code>docs/ARCHITECTURE.md</code> in the verqo-dotnet repo (§6–§7).</footer>
+</div>

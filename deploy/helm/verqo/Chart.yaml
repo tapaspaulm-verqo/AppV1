@@ -1,0 +1,10 @@
+apiVersion: v2
+name: verqo
+description: >
+  Verqo — .NET API + Angular web, containerized for Kubernetes. The database
+  is a managed, external PostgreSQL instance (see values.yaml `database.*`
+  and docs/ARCHITECTURE.md) — nothing here runs Postgres in-cluster, which is
+  the whole point of the "easy maintainable, minimum downtime" choice.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

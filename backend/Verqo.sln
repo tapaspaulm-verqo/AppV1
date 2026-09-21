@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1F9D50D7-84FE-451D-8C58-033DBA8569C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verqo.Domain", "src\Verqo.Domain\Verqo.Domain.csproj", "{F93D87D2-94F0-4E41-899D-34E4874B598F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verqo.Application", "src\Verqo.Application\Verqo.Application.csproj", "{9C2EB4AD-F3D6-4BBA-949C-69B194547D84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verqo.Infrastructure", "src\Verqo.Infrastructure\Verqo.Infrastructure.csproj", "{9845F317-8D66-45DC-B28F-1A5B3B0E3B0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verqo.Api", "src\Verqo.Api\Verqo.Api.csproj", "{0E916963-1A37-4A91-9AB0-43E63578D766}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2FBCA2D3-4EB3-4114-97ED-30E4FCAB5A84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verqo.Application.Tests", "tests\Verqo.Application.Tests\Verqo.Application.Tests.csproj", "{5376F179-402B-43C3-BB0B-1B73F21BBC6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{19E23680-9CF8-4ECF-9933-7BC7C48525BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verqo.OfflineSmokeTests", "tools\Verqo.OfflineSmokeTests\Verqo.OfflineSmokeTests.csproj", "{DC68AB7C-65B3-451D-B0B0-3E97FEA69948}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F93D87D2-94F0-4E41-899D-34E4874B598F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F93D87D2-94F0-4E41-899D-34E4874B598F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F93D87D2-94F0-4E41-899D-34E4874B598F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F93D87D2-94F0-4E41-899D-34E4874B598F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C2EB4AD-F3D6-4BBA-949C-69B194547D84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2EB4AD-F3D6-4BBA-949C-69B194547D84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2EB4AD-F3D6-4BBA-949C-69B194547D84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2EB4AD-F3D6-4BBA-949C-69B194547D84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9845F317-8D66-45DC-B28F-1A5B3B0E3B0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9845F317-8D66-45DC-B28F-1A5B3B0E3B0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9845F317-8D66-45DC-B28F-1A5B3B0E3B0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9845F317-8D66-45DC-B28F-1A5B3B0E3B0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E916963-1A37-4A91-9AB0-43E63578D766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E916963-1A37-4A91-9AB0-43E63578D766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E916963-1A37-4A91-9AB0-43E63578D766}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E916963-1A37-4A91-9AB0-43E63578D766}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5376F179-402B-43C3-BB0B-1B73F21BBC6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5376F179-402B-43C3-BB0B-1B73F21BBC6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5376F179-402B-43C3-BB0B-1B73F21BBC6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5376F179-402B-43C3-BB0B-1B73F21BBC6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC68AB7C-65B3-451D-B0B0-3E97FEA69948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC68AB7C-65B3-451D-B0B0-3E97FEA69948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC68AB7C-65B3-451D-B0B0-3E97FEA69948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC68AB7C-65B3-451D-B0B0-3E97FEA69948}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F93D87D2-94F0-4E41-899D-34E4874B598F} = {1F9D50D7-84FE-451D-8C58-033DBA8569C8}
+		{9C2EB4AD-F3D6-4BBA-949C-69B194547D84} = {1F9D50D7-84FE-451D-8C58-033DBA8569C8}
+		{9845F317-8D66-45DC-B28F-1A5B3B0E3B0D} = {1F9D50D7-84FE-451D-8C58-033DBA8569C8}
+		{0E916963-1A37-4A91-9AB0-43E63578D766} = {1F9D50D7-84FE-451D-8C58-033DBA8569C8}
+		{5376F179-402B-43C3-BB0B-1B73F21BBC6E} = {2FBCA2D3-4EB3-4114-97ED-30E4FCAB5A84}
+		{DC68AB7C-65B3-451D-B0B0-3E97FEA69948} = {19E23680-9CF8-4ECF-9933-7BC7C48525BE}
+	EndGlobalSection
+EndGlobal
