@@ -1,0 +1,6 @@
+{
+  "name": "Verqo",
+  "description": "Verified tech talent marketplace with escrow-protected pay",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
