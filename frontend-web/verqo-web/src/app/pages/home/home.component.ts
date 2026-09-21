@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 /**
@@ -15,22 +15,40 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <section class="hero container">
-      <p class="badge">India · Tech freelance marketplace</p>
-      <h1>Verified tech talent. Escrow-protected pay.</h1>
-      <p class="subhead">
-        Verqo connects Indian tech freelancers with businesses, hourly or by project —
-        with milestone escrow so every rupee is protected until the work is done.
-      </p>
-      <div class="cta-row">
-        <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
-        <a routerLink="/business" class="btn btn-client-outline">Hire talent</a>
-      </div>
-      <div class="trust-strip">
-        <span class="trust-item"><span class="dot"></span>PAN + Aadhaar verified</span>
-        <span class="trust-item"><span class="dot"></span>Escrow-protected milestones</span>
-        <span class="trust-item"><span class="dot"></span>EPF active-status checked</span>
-        <span class="trust-item"><span class="dot"></span>No subscription fees, ever</span>
+    <section class="hero">
+      <video
+        #heroVideo
+        class="hero-video"
+        autoplay
+        muted
+        [muted]="true"
+        loop
+        playsinline
+        preload="auto"
+        poster="/video/hero-poster.jpg"
+        aria-hidden="true"
+      >
+        <source src="/video/hero-banner.webm" type="video/webm" />
+        <source src="/video/hero-banner.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-scrim"></div>
+      <div class="container hero-content">
+        <p class="badge badge-on-dark">India · Tech freelance marketplace</p>
+        <h1 class="hero-heading">Verified tech talent. Escrow-protected pay.</h1>
+        <p class="subhead hero-subhead">
+          Verqo connects Indian tech freelancers with businesses, hourly or by project —
+          with milestone escrow so every rupee is protected until the work is done.
+        </p>
+        <div class="cta-row">
+          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+          <a routerLink="/business" class="btn btn-client-outline">Hire talent</a>
+        </div>
+        <div class="trust-strip hero-trust-strip">
+          <span class="trust-item"><span class="dot"></span>PAN + Aadhaar verified</span>
+          <span class="trust-item"><span class="dot"></span>Escrow-protected milestones</span>
+          <span class="trust-item"><span class="dot"></span>EPF active-status checked</span>
+          <span class="trust-item"><span class="dot"></span>No subscription fees, ever</span>
+        </div>
       </div>
     </section>
 
@@ -148,8 +166,51 @@ import { RouterLink } from '@angular/router';
   styles: [
     `
       .hero {
-        padding: var(--space-16) var(--space-6) var(--space-10);
+        position: relative;
+        overflow: hidden;
+        background: var(--ink);
+        min-height: 560px;
+        display: flex;
+        align-items: center;
+      }
+      .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Branding footage runs behind the hero copy on loop — kept
+           translucent (rather than full-opacity) so it reads as an
+           atmospheric backdrop, not competing with the headline/CTA. */
+        opacity: 0.4;
+      }
+      .hero-scrim {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          115deg,
+          rgba(20, 19, 15, 0.88) 0%,
+          rgba(20, 19, 15, 0.72) 42%,
+          rgba(20, 19, 15, 0.45) 100%
+        );
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        padding: var(--space-16) var(--space-6);
         max-width: 760px;
+      }
+      .hero-heading {
+        color: #ffffff;
+      }
+      .hero-subhead.subhead {
+        color: rgba(255, 255, 255, 0.82);
+      }
+      .hero-trust-strip {
+        border-top-color: rgba(255, 255, 255, 0.18);
+      }
+      .hero-trust-strip .trust-item {
+        color: rgba(255, 255, 255, 0.75);
       }
       .subhead {
         font-size: 18px;
@@ -320,4 +381,25 @@ import { RouterLink } from '@angular/router';
     `,
   ],
 })
-export class HomeComponent {}
+export class HomeComponent implements AfterViewInit {
+  @ViewChild('heroVideo') private heroVideo?: ElementRef<HTMLVideoElement>;
+
+  /**
+   * Belt-and-braces autoplay: the `muted`/`[muted]` attribute+binding above
+   * covers most browsers, but some only honour autoplay-without-a-gesture
+   * when `.muted` is set as a live DOM property before `.play()` is called
+   * (a well-known quirk for video elements inserted/managed by a framework
+   * rather than parsed directly from HTML). Setting both, and calling
+   * `.play()` explicitly, makes the loop reliable across browsers; if
+   * autoplay is still blocked (e.g. a strict mobile browser setting), the
+   * poster frame is a reasonable static fallback, so the catch is a no-op.
+   */
+  ngAfterViewInit(): void {
+    const video = this.heroVideo?.nativeElement;
+    if (!video) return;
+    video.muted = true;
+    video.play().catch(() => {
+      // Autoplay blocked — the poster frame stands in for the hero visual.
+    });
+  }
+}
