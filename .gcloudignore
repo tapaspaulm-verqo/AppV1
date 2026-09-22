@@ -1,0 +1,18 @@
+.gcloudignore
+.git
+.gitignore
+
+# Cache and build outputs
+.angular/
+**/.angular/
+frontend-web/verqo-web/.angular/
+
+# Other non-web projects in monorepo
+backend/
+mobile/
+deploy/
+docs/
+
+# Lockfiles and temporary files
+*.lock
+*.log
