@@ -83,6 +83,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>1.5</strong> These Terms are an electronic record under the Information Technology Act, 2000 and the rules under it. They do not require physical or digital signatures.</p>
 
         <h2 id="definitions">2. Definitions</h2>
+        <div class="table-scroll">
         <table>
           <tbody>
             <tr><td><strong>Client</strong></td><td>A business, organisation or individual acting for a business that uses the Platform to hire Freelancers or to have projects delivered.</td></tr>
@@ -100,6 +101,7 @@ import { RouterLink } from '@angular/router';
             <tr><td><strong>Work Product</strong></td><td>The deliverables a Freelancer creates specifically for a Contract.</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h2 id="role">3. Verqo's role</h2>
         <p><strong>3.1</strong> Verqo is an online marketplace and intermediary. It provides the technology that lets Clients and Freelancers find each other, form Contracts, and pay and be paid through escrow.</p>
@@ -246,6 +248,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>22.5</strong> We may send notices to you by email, by in-app message or by posting on the Platform. You may contact us at [support email address] or at the address in Clause 1.1.</p>
 
         <h2 id="annex-a">Annex A: Fee schedule</h2>
+        <div class="table-scroll">
         <table>
           <thead>
             <tr><th>Party / plan</th><th>Registration or subscription</th><th>Fee</th><th>When charged</th></tr>
@@ -256,7 +259,9 @@ import { RouterLink } from '@angular/router';
             <tr><td>Client: Business Plus</td><td>None</td><td>Negotiated by volume, from 10% down to a minimum of 5% of Contract Value; includes dedicated support</td><td>At each Milestone funding</td></tr>
           </tbody>
         </table>
+        </div>
         <p class="table-caption">Worked example: Milestone with a Contract Value of ₹1,00,000</p>
+        <div class="table-scroll">
         <table>
           <thead>
             <tr><th></th><th>Standard Business plan (10%)</th><th>Business Plus at 5%</th></tr>
@@ -267,9 +272,11 @@ import { RouterLink } from '@angular/router';
             <tr><td>Platform Fees received by Verqo</td><td>₹15,000 (₹10,000 Client Fee + ₹5,000 Freelancer Fee)</td><td>₹10,000 (₹5,000 Client Fee + ₹5,000 Freelancer Fee)</td></tr>
           </tbody>
         </table>
+        </div>
         <p class="table-note">Tax treatment of the fees is to be confirmed (Clause 8.5). The figures above are examples only.</p>
 
         <h2 id="annex-b">Annex B: Escrow and payment timelines</h2>
+        <div class="table-scroll">
         <table>
           <tbody>
             <tr><td>Milestone shows as Funded</td><td>When the Payment Partner confirms receipt of the client payment</td></tr>
@@ -282,6 +289,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>Bank detail change cooling-off</td><td>[48] hours</td></tr>
           </tbody>
         </table>
+        </div>
       </article>
 
       <div class="legal-footer">
@@ -392,6 +400,26 @@ import { RouterLink } from '@angular/router';
       }
       .legal-body .badge {
         font-family: var(--font-mono, monospace);
+      }
+      /* These fee/annex tables have a nowrap first column (below) and
+         several other columns, which adds up to wider than a phone
+         viewport. Without this, the table forces the WHOLE PAGE to scroll
+         horizontally on mobile, not just the table — found via a mobile
+         crawl (scrollWidth 612px vs a 320px viewport). Wrapping each
+         table in this scrollable container keeps the rest of the page
+         fixed-width and gives mobile users a normal way to see the extra
+         columns (swipe the table, not the page).
+
+         Deliberately NOT 'table-layout: fixed' on the table itself: that
+         forces every column to an equal, often too-narrow width, and
+         unbreakable words (e.g. "Registration") then overflow visibly
+         into the neighbouring column instead of wrapping — worse than
+         the scroll it was meant to avoid. Auto layout (the default) never
+         does that; it only ever makes the table wider, which this wrapper
+         safely contains. */
+      .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .legal-body table {
         width: 100%;

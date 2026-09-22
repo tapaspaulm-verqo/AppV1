@@ -81,6 +81,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>1.4</strong> When we need your consent, we ask for it clearly and separately. By using the Platform you confirm that you have read this Policy.</p>
 
         <h2 id="data-we-collect">2. Personal data we collect</h2>
+        <div class="table-scroll">
         <table>
           <thead><tr><th>Category</th><th>Examples</th><th>Where it comes from</th></tr></thead>
           <tbody>
@@ -95,9 +96,11 @@ import { RouterLink } from '@angular/router';
             <tr><td>Gig worker registration</td><td>Details the law requires us to give a government portal for registering gig and platform workers</td><td>You; our records</td></tr>
           </tbody>
         </table>
+        </div>
         <p class="table-note">We do not need and ask you not to upload information such as religion, caste, health or political views. We do not store full card numbers; card payments are handled by the Payment Partner.</p>
 
         <h2 id="how-we-use">3. How and why we use personal data</h2>
+        <div class="table-scroll">
         <table>
           <thead><tr><th>Purpose</th><th>Main data used</th><th>Basis</th></tr></thead>
           <tbody>
@@ -112,6 +115,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>Improve and analyse the Platform, using de-identified data where possible</td><td>Usage data</td><td>Your consent</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h2 id="pf-check">4. Employment (PF) eligibility check</h2>
         <p><strong>4.1</strong> Why. Verqo is intended for professionals who are not in full-time employment. We therefore check whether a Freelancer has an active Provident Fund account with a current employer.</p>
@@ -127,6 +131,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>5.2</strong> You can withdraw consent at any time, as easily as you gave it, in Settings under Privacy or by writing to [privacy email address]. Withdrawal does not affect processing done before, and it may mean we cannot provide some services. After withdrawal we will stop processing, and ask our service providers to stop, unless the law requires us to keep the data.</p>
 
         <h2 id="sharing">6. Who we share personal data with</h2>
+        <div class="table-scroll">
         <table>
           <thead><tr><th>Recipient</th><th>Why</th><th>What they receive</th></tr></thead>
           <tbody>
@@ -140,6 +145,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>A buyer or successor to our business</td><td>Sale, merger or restructuring</td><td>Data under the same protections as this Policy</td></tr>
           </tbody>
         </table>
+        </div>
         <p><strong>6.1</strong> We do not sell your personal data. Service providers act on our instructions under contracts that require confidentiality and security.</p>
 
         <h2 id="storage">7. Where data is stored and international access</h2>
@@ -147,6 +153,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>7.2</strong> Clients outside India can see the profile information you choose to make visible on the Platform. We transfer personal data outside India only as the law permits and with suitable safeguards.</p>
 
         <h2 id="retention">8. How long we keep personal data</h2>
+        <div class="table-scroll">
         <table>
           <thead><tr><th>Data</th><th>Retention</th></tr></thead>
           <tbody>
@@ -159,6 +166,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>Marketing preferences</td><td>Until you withdraw consent</td></tr>
           </tbody>
         </table>
+        </div>
         <p class="table-note">When the purpose has been served and no law requires us to keep the data, we delete it or remove details that identify you.</p>
 
         <h2 id="security">9. How we protect personal data</h2>
@@ -182,6 +190,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>11.1</strong> The Platform is for people aged 18 and over. We do not knowingly collect personal data of children. If we learn we hold it, we will delete it.</p>
 
         <h2 id="cookies">12. Cookies and similar technologies</h2>
+        <div class="table-scroll">
         <table>
           <thead><tr><th>Type</th><th>Purpose</th><th>Your choice</th></tr></thead>
           <tbody>
@@ -191,6 +200,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>Marketing</td><td>Not used at launch [confirm]</td><td>Would need your consent first</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h2 id="automated">13. Automated tools and AI</h2>
         <p><strong>13.1</strong> We use automated tools for matching and recommendations, fraud detection and verification. We do not take decisions that have legal or similarly significant effects on you, such as rejecting or removing a Freelancer, without a human review.</p>
@@ -200,6 +210,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>14.1</strong> The Platform may link to other websites or services. We are not responsible for their privacy practices, and we encourage you to read their policies.</p>
 
         <h2 id="grievance">15. Grievance Officer and contact</h2>
+        <div class="table-scroll">
         <table>
           <tbody>
             <tr><td>Grievance Officer</td><td>[Name], [Designation]</td></tr>
@@ -210,6 +221,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>Response times</td><td>Acknowledgement within [48 hours]; resolution within [30] days and in any case within the period the law sets</td></tr>
           </tbody>
         </table>
+        </div>
 
         <h2 id="changes">16. Changes to this Policy</h2>
         <p><strong>16.1</strong> We may update this Policy. For material changes we will notify you by email or in the Platform, and ask for consent again where the law requires. The effective date is at the top of this Policy, and earlier versions are available on request.</p>
@@ -319,6 +331,26 @@ import { RouterLink } from '@angular/router';
       .legal-body a {
         color: var(--ink);
         font-weight: 600;
+      }
+      /* These fee/annex tables have a nowrap first column (below) and
+         several other columns, which adds up to wider than a phone
+         viewport. Without this, the table forces the WHOLE PAGE to scroll
+         horizontally on mobile, not just the table — found via a mobile
+         crawl (scrollWidth 612px vs a 320px viewport). Wrapping each
+         table in this scrollable container keeps the rest of the page
+         fixed-width and gives mobile users a normal way to see the extra
+         columns (swipe the table, not the page).
+
+         Deliberately NOT 'table-layout: fixed' on the table itself: that
+         forces every column to an equal, often too-narrow width, and
+         unbreakable words (e.g. "Registration") then overflow visibly
+         into the neighbouring column instead of wrapping — worse than
+         the scroll it was meant to avoid. Auto layout (the default) never
+         does that; it only ever makes the table wider, which this wrapper
+         safely contains. */
+      .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .legal-body table {
         width: 100%;

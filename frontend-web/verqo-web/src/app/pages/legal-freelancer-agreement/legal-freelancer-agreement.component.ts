@@ -149,6 +149,7 @@ import { RouterLink } from '@angular/router';
         <p><strong>13.4</strong> Notices may be sent by email, in-app message or by posting on the Platform.</p>
 
         <h2 id="annex-a">Annex A: Fee and payout summary</h2>
+        <div class="table-scroll">
         <table>
           <tbody>
             <tr><td>Registration fee</td><td>None</td></tr>
@@ -159,7 +160,9 @@ import { RouterLink } from '@angular/router';
             <tr><td>Bank detail change</td><td>Re-verification and a cooling-off period of [48] hours</td></tr>
           </tbody>
         </table>
+        </div>
         <p class="table-caption">Worked example: Milestone with a Contract Value of ₹1,00,000</p>
+        <div class="table-scroll">
         <table>
           <tbody>
             <tr><td>Contract Value agreed with the Client</td><td>₹1,00,000</td></tr>
@@ -167,6 +170,7 @@ import { RouterLink } from '@angular/router';
             <tr><td>Paid to you</td><td>₹95,000</td></tr>
           </tbody>
         </table>
+        </div>
         <p class="table-note">The Client pays a separate Client Fee, which does not reduce your payment. Tax treatment is described in Clause 5.5.</p>
 
         <h2 id="annex-c">Annex C: Standard Engagement Terms</h2>
@@ -287,6 +291,26 @@ import { RouterLink } from '@angular/router';
       .legal-body a {
         color: var(--ink);
         font-weight: 600;
+      }
+      /* These fee/annex tables have a nowrap first column (below) and
+         several other columns, which adds up to wider than a phone
+         viewport. Without this, the table forces the WHOLE PAGE to scroll
+         horizontally on mobile, not just the table — found via a mobile
+         crawl (scrollWidth 612px vs a 320px viewport). Wrapping each
+         table in this scrollable container keeps the rest of the page
+         fixed-width and gives mobile users a normal way to see the extra
+         columns (swipe the table, not the page).
+
+         Deliberately NOT 'table-layout: fixed' on the table itself: that
+         forces every column to an equal, often too-narrow width, and
+         unbreakable words (e.g. "Registration") then overflow visibly
+         into the neighbouring column instead of wrapping — worse than
+         the scroll it was meant to avoid. Auto layout (the default) never
+         does that; it only ever makes the table wider, which this wrapper
+         safely contains. */
+      .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .legal-body table {
         width: 100%;
