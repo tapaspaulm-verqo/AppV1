@@ -242,10 +242,6 @@ export class ApiService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, payload);
   }
 
-  firebaseLogin(payload: { email: string; displayName?: string; uid: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/auth/firebase-login`, payload);
-  }
-
   getFreelancerDashboard(): Observable<FreelancerDashboard> {
     return this.http.get<FreelancerDashboard>(`${this.baseUrl}/dashboard/freelancer`);
   }
