@@ -6,8 +6,11 @@ repo root for why Flutter was chosen over .NET MAUI or React Native.
 
 ## Status
 
-Source-complete for the three flows the backend actually supports today —
-freelancer registration, client registration, and browsing open roles — not
+Source-complete for the flows the backend supports today — freelancer
+registration, client registration, browsing open roles, login, and the full
+personalised post-login Freelancer/Client dashboards (contracts, payment
+and delivery milestones, escrow actions, tax summary, finding
+contractors/work, posting a project or applying to one) — not
 built-and-verified on a device here. The Flutter SDK could not be installed
 in the sandbox that produced (and later expanded) this scaffold: its
 download host, `storage.googleapis.com`, along with `pub.dev` (package
@@ -54,17 +57,52 @@ drop the `flutter create` step from CI in favour of the checked-in folders.
 ## What's here
 
 - `lib/main.dart` — app entry point; home is `RootShell`.
-- `lib/screens/root_shell.dart` — bottom nav (Home / Find work). Signup is
-  reached from Home's two CTAs, not its own tab — mirroring how the web app
-  treats signup as a destination, not a persistent nav item.
+- `lib/screens/root_shell.dart` — bottom nav with three tabs: Home, Find
+  work, and an auth-aware third tab that mirrors the web app's header —
+  "Log in" (→ `LoginScreen`) when signed out, "Dashboard" (→
+  `DashboardScreen`, with a way to log out) once signed in. Rebuilds
+  automatically on `AuthService` changes so logging in/out updates the tab
+  immediately, no navigation needed. Signup is still reached from Home's
+  two CTAs, not its own tab.
 - `lib/theme/verqo_theme.dart` — brand tokens (ink/accent-green/client-plum,
   IBM Plex Sans + Inter via `google_fonts`) — identical hex values to the
   Angular app's `styles.css` and the "Verqo Brand Identity & Design System
   v1" source doc, so all three clients render as one brand.
 - `lib/services/api_client.dart` — thin HTTP client for `Verqo.Api`:
-  freelancer registration, client registration, open-jobs listing, and a
-  shared helper that flattens the API's `ValidationProblemDetails` error
+  freelancer/client registration, open-jobs listing, login, the two
+  dashboard endpoints, milestone actions (fund/start/submit/approve),
+  freelancer search, job posting, proposal submission — plus the response
+  model classes (field-for-field matching `DashboardController`'s JSON) and
+  a shared helper that flattens the API's `ValidationProblemDetails` error
   shape into one readable string.
+- `lib/services/auth_service.dart` — holds the JWT session
+  (`AuthService.instance`, a `ChangeNotifier`), persisted across app
+  restarts via `shared_preferences` — the mobile equivalent of the web
+  app's `auth.service.ts`/localStorage. An expired stored session is
+  discarded on restore rather than trusted.
+- `lib/utils/money.dart` — rupee formatting and milestone-state
+  label/color mapping shared by the Jobs list and both dashboards. No
+  `intl` dependency, and colors are fixed literal tints rather than a
+  runtime `.withOpacity()`/`.withValues()` call — see the doc comment on
+  `MilestoneStateStyle` for why (same reasoning as `client_signup_screen.dart`'s
+  `_KycRow`, generalised here).
+- `lib/screens/login_screen.dart` — single login form for both personas
+  (`POST /auth/login`); which dashboard renders after login depends purely
+  on the returned user's `role`.
+- `lib/screens/dashboard/dashboard_screen.dart` — routes a logged-in
+  session to `FreelancerDashboardScreen` or `ClientDashboardScreen` by
+  role, mirroring the web app's `DashboardComponent`.
+- `lib/screens/dashboard/freelancer_dashboard_screen.dart` — contracts and
+  their milestones (with Start work/Submit for review actions), earnings
+  and tax summary (Section 194-O TDS estimate, GST on file), and
+  recommended-jobs search with an inline apply flow.
+- `lib/screens/dashboard/client_dashboard_screen.dart` — contracts and
+  their milestones (with a Fund escrow action), pending payment-release
+  approvals, escrow balance, posted jobs, creating a new project, and
+  searching for contractors.
+- `lib/screens/dashboard/dashboard_widgets.dart` — the stat cards, contract
+  card and milestone row shared by both dashboard screens (recolored per
+  persona — accent green vs. client plum — rather than duplicated).
 - `lib/validators/kyc_validators.dart` — PAN format, Aadhaar Verhoeff
   checksum, and GSTIN structural checks — line-for-line ports of the same
   logic in `Verqo.Application.Kyc` (C#) and the Angular app's
@@ -76,12 +114,16 @@ drop the `flutter create` step from CI in favour of the checked-in folders.
 - `lib/screens/client_signup_screen.dart` — wired to
   `POST /clients/register` (company name + optional GSTIN).
 - `lib/screens/jobs_screen.dart` — read-only open-roles list from
-  `GET /jobs`. Proposals/contracts aren't wired up on any client yet (see
-  `docs/ARCHITECTURE.md` §10, item 5).
+  `GET /jobs`.
 - `test/validators/kyc_validators_test.dart` — unit tests using the exact
   same test vectors already proven correct against the C# port (see
   `backend/tools/Verqo.OfflineSmokeTests`, 38/38 + 9 GSTIN + 7 client
   checks passing there).
+- `test/services/dashboard_models_test.dart` — parses realistic
+  `DashboardController`/`AuthController` JSON fixtures through the response
+  model classes, and round-trips `AuthService`'s persisted-session logic
+  (including that an expired stored session is discarded) via
+  `SharedPreferences.setMockInitialValues`.
 - `test/widget_test.dart` — smoke tests for navigation and both signup
   forms opening correctly.
 
@@ -115,8 +157,6 @@ the host machine's `localhost:8080`, where `Verqo.Api` runs locally).
   `<queries>` entry that only makes sense once `android/` is a real,
   committed folder) or an in-app legal-docs screen. Worth doing properly
   before a Play Store submission, since this app collects PAN/Aadhaar.
-- No login/session screens — the backend has no login endpoint yet either
-  (see `docs/ARCHITECTURE.md` §10, item 5).
 - No app icon/launcher assets — `flutter create`'s defaults apply until
   real brand assets (the Vertex mark) are supplied.
 - Dark theme isn't wired up, even though every color token above has its

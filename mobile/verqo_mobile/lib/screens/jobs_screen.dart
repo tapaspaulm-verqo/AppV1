@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_client.dart';
 import '../theme/verqo_theme.dart';
+import '../utils/money.dart';
 
 /// Open-role browsing — GET /api/v1/jobs (JobsController). Read-only for
 /// now: proposals/contracts aren't wired up yet on any client (see
@@ -93,29 +94,12 @@ class _JobCard extends StatelessWidget {
   final JobSummary job;
   const _JobCard({required this.job});
 
-  /// Budget fields come back in minor units (paise) — see JobsController.
-  /// A hand-rolled thousands separator keeps this screen dependency-free
-  /// like the rest of lib/validators and lib/services (no `intl` package).
-  /// Deliberately plain Western grouping, not lakh/crore grouping — an
-  /// honest approximation rather than a half-right locale-specific one.
-  static String _formatRupees(int minor) {
-    final rupees = (minor / 100).round();
-    final digits = rupees.toString();
-    final buffer = StringBuffer();
-    for (var i = 0; i < digits.length; i++) {
-      final remaining = digits.length - i;
-      buffer.write(digits[i]);
-      if (remaining > 1 && (remaining - 1) % 3 == 0) buffer.write(',');
-    }
-    return '₹$buffer';
-  }
-
   String get _budgetLabel {
     final min = job.budgetMinorMin;
     final max = job.budgetMinorMax;
     if (min == null && max == null) return 'Budget not specified';
-    if (min != null && max != null) return '${_formatRupees(min)} – ${_formatRupees(max)}';
-    return _formatRupees((min ?? max)!);
+    if (min != null && max != null) return '${Money.formatMinor(min)} – ${Money.formatMinor(max)}';
+    return Money.formatMinor((min ?? max)!);
   }
 
   @override
