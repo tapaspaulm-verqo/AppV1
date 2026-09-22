@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Verqo.Api.Auth;
 using Verqo.Application.Clients;
 using Verqo.Application.Freelancers;
 using Verqo.Application.Kyc;
@@ -18,6 +19,8 @@ var connectionString = builder.Configuration.GetConnectionString("VerqoDb")
     ?? throw new InvalidOperationException("ConnectionStrings:VerqoDb is not configured.");
 var jwtSigningKey = builder.Configuration["Jwt:SigningKey"]
     ?? throw new InvalidOperationException("Jwt:SigningKey is not configured.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "verqo-api";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "verqo-clients";
 var aadhaarHashPepper = builder.Configuration["Kyc:AadhaarHashPepper"]
     ?? throw new InvalidOperationException("Kyc:AadhaarHashPepper is not configured.");
 
@@ -54,8 +57,8 @@ builder.Services
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "verqo-api",
-            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "verqo-clients",
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey)),
         };
     });
@@ -73,6 +76,11 @@ builder.Services.AddScoped<IPaymentGatewayAdapter, MockPaymentGatewayAdapter>();
 builder.Services.AddScoped(sp => new RegisterFreelancerService(
     sp.GetRequiredService<IKycVerificationService>(),
     aadhaarHashPepper));
+
+// Issues the JWTs the AddJwtBearer call above validates — same three
+// config values, see JwtTokenService remarks for why it's constructed
+// here rather than reading IConfiguration itself.
+builder.Services.AddScoped(_ => new JwtTokenService(jwtIssuer, jwtAudience, jwtSigningKey));
 
 // Client registration has no external verification dependency yet (see
 // RegisterClientService remarks), so it's a plain scoped service.

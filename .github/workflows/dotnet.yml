@@ -53,3 +53,79 @@ jobs:
 
       - name: Run the offline smoke-test suite too (belt and suspenders)
         run: dotnet run --project tools/Verqo.OfflineSmokeTests --configuration Release
+
+  migration-consistency:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    # Real verification for src/Verqo.Infrastructure/Migrations/*: those
+    # files (the InitialCreate migration, its Designer.cs, and
+    # VerqoDbContextModelSnapshot.cs) were hand-written against a real local
+    # Postgres in a sandbox that had no NuGet access to run `dotnet ef`
+    # itself — see that migration's doc comment. This job is where they
+    # actually get checked with the real tool, against a real Postgres,
+    # the first time. Two independent checks: the migration applies
+    # cleanly (proves the Up() SQL and the [Migration] discovery attribute
+    # in Designer.cs both work), and `migrations add` on top of it reports
+    # no pending model changes (proves VerqoDbContextModelSnapshot.cs
+    # actually matches the live VerqoDbContext model — the one thing that
+    # couldn't be checked without this).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: verqo
+          POSTGRES_PASSWORD: verqo-ci-only
+          POSTGRES_DB: verqo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Remove sandbox-only NuGet.Config
+        run: rm -f NuGet.Config
+
+      - name: Restore
+        run: dotnet restore Verqo.sln
+
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef --version 8.*
+
+      # Every step below stays in the job-level `backend` working directory
+      # (no per-step `working-directory`/`cd` juggling) so `--project`/
+      # `--startup-project` and the later `git status` path all agree on
+      # the same relative paths. VerqoDbContextFactory (an
+      # IDesignTimeDbContextFactory) is what actually supplies the
+      # connection string below — see its own doc comment.
+      - name: Apply the InitialCreate migration to a real Postgres
+        env:
+          ConnectionStrings__VerqoDb: "Host=localhost;Port=5432;Database=verqo;Username=verqo;Password=verqo-ci-only"
+        run: dotnet ef database update --project src/Verqo.Infrastructure --startup-project src/Verqo.Api
+
+      - name: Assert the model snapshot has no pending changes
+        env:
+          ConnectionStrings__VerqoDb: "Host=localhost;Port=5432;Database=verqo;Username=verqo;Password=verqo-ci-only"
+        # `migrations add` always scaffolds a migration file, even a no-op
+        # one — so "no drift" isn't "the command produced nothing", it's
+        # "the new migration's Up()/Down() are empty and
+        # VerqoDbContextModelSnapshot.cs is byte-identical to before". Check
+        # with `git status --porcelain` (not `git diff`), since a brand-new
+        # migration pair is an untracked file, not a modification to one —
+        # `git diff` alone would miss it.
+        run: |
+          dotnet ef migrations add __ConsistencyCheck --project src/Verqo.Infrastructure --startup-project src/Verqo.Api
+          if [ -n "$(git status --porcelain -- src/Verqo.Infrastructure/Migrations)" ]; then
+            echo "::error::VerqoDbContextModelSnapshot.cs (or the InitialCreate migration) is out of sync with VerqoDbContext. Regenerate with 'dotnet ef migrations add' locally and commit the result:"
+            git status --porcelain -- src/Verqo.Infrastructure/Migrations
+            exit 1
+          fi

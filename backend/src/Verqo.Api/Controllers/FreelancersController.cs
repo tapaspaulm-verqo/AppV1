@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Verqo.Application.Freelancers;
 using Verqo.Infrastructure.Persistence;
 
@@ -8,6 +10,74 @@ namespace Verqo.Api.Controllers;
 [Route("api/v1/freelancers")]
 public class FreelancersController(RegisterFreelancerService registerFreelancerService, VerqoDbContext db) : ControllerBase
 {
+    /// <summary>
+    /// A Client's "find new contractors" search. Deliberately exposes only
+    /// what a hiring decision needs (headline, role, rate band, experience,
+    /// hourly rate, verification status) — never PAN/Aadhaar/bank details,
+    /// which stay on FreelancerProfile and out of every projection in this
+    /// file.
+    /// </summary>
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> List([FromQuery] string? role, [FromQuery] string? q, CancellationToken ct)
+    {
+        var query = db.FreelancerProfiles.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(role))
+        {
+            query = query.Where(f => f.PrimaryRole == role);
+        }
+
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            var term = q.Trim();
+            query = query.Where(f =>
+                f.DisplayName.Contains(term) ||
+                f.PrimaryRole.Contains(term) ||
+                (f.Headline != null && f.Headline.Contains(term)));
+        }
+
+        var freelancers = await query
+            .OrderByDescending(f => f.CreatedAt)
+            .Select(f => new
+            {
+                f.Id,
+                f.DisplayName,
+                f.Headline,
+                f.PrimaryRole,
+                rateBand = f.RateBand.ToString(),
+                experienceLevel = f.ExperienceLevel.ToString(),
+                f.HourlyRateMinor,
+                f.IsFullyVerified,
+            })
+            .ToListAsync(ct);
+
+        return Ok(freelancers);
+    }
+
+    [Authorize]
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
+    {
+        var freelancer = await db.FreelancerProfiles
+            .Where(f => f.Id == id)
+            .Select(f => new
+            {
+                f.Id,
+                f.DisplayName,
+                f.Headline,
+                f.Bio,
+                f.PrimaryRole,
+                rateBand = f.RateBand.ToString(),
+                experienceLevel = f.ExperienceLevel.ToString(),
+                f.HourlyRateMinor,
+                f.IsFullyVerified,
+            })
+            .FirstOrDefaultAsync(ct);
+
+        return freelancer is null ? NotFound() : Ok(freelancer);
+    }
+
     /// <summary>
     /// Freelancer registration. Runs PAN format validation, Aadhaar
     /// format+checksum validation, and (if a UAN is supplied) an EPF
@@ -85,4 +155,20 @@ public static class PasswordHasher
 {
     public static string Hash(string password) =>
         Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(password)));
+
+    /// <summary>
+    /// Used by AuthController's login endpoint. Safe against timing
+    /// side-channels the same way the SHA256 comparison in an ASP.NET Core
+    /// Identity PasswordHasher would be — <see cref="System.Security.Cryptography.CryptographicOperations.FixedTimeEquals"/>
+    /// rather than <c>==</c>/<c>string.Equals</c>, which short-circuits on
+    /// the first differing byte and could otherwise leak how many
+    /// leading hex characters of a guess were correct.
+    /// </summary>
+    public static bool Verify(string password, string passwordHash)
+    {
+        var candidate = Hash(password);
+        return System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
+            System.Text.Encoding.UTF8.GetBytes(candidate),
+            System.Text.Encoding.UTF8.GetBytes(passwordHash));
+    }
 }

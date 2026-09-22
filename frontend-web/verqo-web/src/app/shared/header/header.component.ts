@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -28,9 +29,15 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
           <a routerLink="/pricing" routerLinkActive="active">Pricing</a>
         </nav>
         <div class="actions">
-          <a routerLink="/login" class="login-link">Log in</a>
-          <a routerLink="/business" class="btn btn-client-outline">Hire talent</a>
-          <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+          @if (auth.isLoggedIn()) {
+            <span class="welcome-text">{{ auth.currentUser()?.displayName }}</span>
+            <a routerLink="/dashboard" class="btn btn-secondary">Dashboard</a>
+            <button type="button" class="btn btn-secondary" (click)="logout()">Log out</button>
+          } @else {
+            <a routerLink="/login" class="login-link">Log in</a>
+            <a routerLink="/business" class="btn btn-client-outline">Hire talent</a>
+            <a routerLink="/signup/freelancer" class="btn btn-accent">Join as a freelancer</a>
+          }
         </div>
       </div>
     </header>
@@ -99,6 +106,15 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         display: inline-block;
         white-space: nowrap;
       }
+      .actions button.btn {
+        font-family: inherit;
+      }
+      .welcome-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+      }
       @media (max-width: 900px) {
         .primary-nav {
           display: none;
@@ -113,7 +129,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
            on every phone-width screen. Scoping to .site-header raises
            specificity above ".actions .btn" so this actually wins. */
         .site-header .login-link,
-        .site-header .btn-client-outline {
+        .site-header .btn-client-outline,
+        .site-header .welcome-text {
           display: none;
         }
       }
@@ -134,4 +151,14 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     `,
   ],
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  constructor(
+    readonly auth: AuthService,
+    private readonly router: Router,
+  ) {}
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigateByUrl('/');
+  }
+}

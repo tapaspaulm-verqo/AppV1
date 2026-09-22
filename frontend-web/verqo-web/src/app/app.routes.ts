@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 import { AboutComponent } from './pages/about/about.component';
 import { ClientSignupComponent } from './pages/client-signup/client-signup.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ForBusinessComponent } from './pages/for-business/for-business.component';
 import { ForFreelancersComponent } from './pages/for-freelancers/for-freelancers.component';
 import { FreelancerSignupComponent } from './pages/freelancer-signup/freelancer-signup.component';
@@ -12,6 +14,7 @@ import { LegalClientAgreementComponent } from './pages/legal-client-agreement/le
 import { LegalFreelancerAgreementComponent } from './pages/legal-freelancer-agreement/legal-freelancer-agreement.component';
 import { LegalPrivacyComponent } from './pages/legal-privacy/legal-privacy.component';
 import { LegalTermsComponent } from './pages/legal-terms/legal-terms.component';
+import { LoginComponent } from './pages/login/login.component';
 import { PricingComponent } from './pages/pricing/pricing.component';
 import { TrustSafetyComponent } from './pages/trust-safety/trust-safety.component';
 import { ComingSoonComponent } from './shared/coming-soon/coming-soon.component';
@@ -45,25 +48,8 @@ export const routes: Routes = [
       cta: { label: 'Hire talent', link: '/signup/client' },
     },
   },
-  {
-    path: 'login',
-    component: ComingSoonComponent,
-    data: {
-      title: 'Log in',
-      blurb: 'Account login is coming soon. New here? Create a freelancer or client account instead.',
-      cta: { label: 'Join as a freelancer', link: '/signup/freelancer' },
-    },
-  },
-  {
-    path: 'dashboard',
-    component: ComingSoonComponent,
-    data: {
-      title: 'Dashboard',
-      blurb:
-        'Your contracts, milestones and earnings will live here once you have an account and an active contract.',
-      cta: { label: 'Join as a freelancer', link: '/signup/freelancer' },
-    },
-  },
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   {
     path: 'messages',
     component: ComingSoonComponent,
