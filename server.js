@@ -4,6 +4,8 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, getDocFromServer, setDoc } from 'firebase/firestore';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,6 +14,38 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
+// Firebase Configuration & Initialization
+let firebaseDb = null;
+try {
+  if (fs.existsSync('./firebase-applet-config.json')) {
+    const config = JSON.parse(fs.readFileSync('./firebase-applet-config.json', 'utf8'));
+    const fbApp = initializeApp(config);
+    firebaseDb = getFirestore(fbApp, config.firestoreDatabaseId);
+    console.log('[Firebase] Server initialized Firestore successfully with db:', config.firestoreDatabaseId);
+
+    getDocFromServer(doc(firebaseDb, 'test', 'connection'))
+      .then(() => {
+        console.log('[Firebase] Server verified Firestore connection.');
+      })
+      .catch((err) => {
+        if (err?.message?.includes('the client is offline')) {
+          console.error('Please check your Firebase configuration.');
+        }
+      });
+  }
+} catch (err) {
+  console.warn('[Firebase] Server initialization notice:', err.message);
+}
+
+async function persistToFirestore(col, id, data) {
+  if (!firebaseDb) return;
+  try {
+    await setDoc(doc(firebaseDb, col, id), data, { merge: true });
+  } catch (err) {
+    console.warn(`[Firebase] Could not persist to ${col}/${id}:`, err.message);
+  }
+}
 
 // CORS & logging
 app.use((req, res, next) => {
@@ -513,6 +547,81 @@ app.post('/api/v1/auth/login', (req, res) => {
 
   if (!user || user.password !== password) {
     return res.status(401).json({ error: 'Invalid email or password.' });
+  }
+
+  const token = 'tok_' + crypto.randomBytes(24).toString('hex');
+  const expiresAt = new Date(Date.now() + 12 * 3600 * 1000).toISOString();
+
+  const sessionUser = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    displayName: user.displayName || user.email,
+    freelancerProfileId: user.freelancerProfileId || null,
+    clientProfileId: user.clientProfileId || null,
+    isFullyVerified: user.isFullyVerified ?? true,
+  };
+
+  sessions.set(token, { token, expiresAt, user: sessionUser });
+
+  res.json({
+    token,
+    expiresAt,
+    user: sessionUser,
+  });
+});
+
+// POST /api/v1/auth/firebase-login
+app.post('/api/v1/auth/firebase-login', async (req, res) => {
+  const { email, displayName, uid } = req.body || {};
+  if (!email && !uid) {
+    return res.status(400).json({ error: 'Email or UID is required.' });
+  }
+
+  const normEmail = (email || `${uid}@verqo.user`).trim().toLowerCase();
+  let user = Array.from(usersStore.values()).find(u => u.email === normEmail || u.id === uid);
+
+  if (!user) {
+    const userId = uid || `u-fb-${Date.now()}`;
+    const profileId = `fp-${Date.now()}`;
+    const name = displayName || email.split('@')[0] || 'Verified Talent';
+
+    user = {
+      id: userId,
+      email: normEmail,
+      role: 'Freelancer',
+      displayName: name,
+      freelancerProfileId: profileId,
+      clientProfileId: null,
+      isFullyVerified: true,
+      createdAt: new Date().toISOString(),
+    };
+    usersStore.set(userId, user);
+
+    const newProfile = {
+      id: profileId,
+      userId: userId,
+      displayName: name,
+      headline: 'Full-Stack Software Engineer & Distributed Architect',
+      bio: 'Verified professional profile created via Firebase Authentication.',
+      primaryRole: 'FullStack',
+      rateBand: 'Band2',
+      experienceLevel: 'Senior',
+      hourlyRateMinor: 220000,
+      isFullyVerified: true,
+      panStatus: 'Eligible',
+      aadhaarStatus: 'Eligible',
+      epfStatus: 'Eligible',
+      panNumber: 'ABCDE1234F',
+      aadhaarLast4: '5678',
+      epfUan: '100998877665',
+      createdAt: new Date().toISOString(),
+    };
+    freelancerProfiles.set(profileId, newProfile);
+
+    // Persist to Firestore
+    persistToFirestore('users', userId, user);
+    persistToFirestore('freelancerProfiles', profileId, newProfile);
   }
 
   const token = 'tok_' + crypto.randomBytes(24).toString('hex');

@@ -1,0 +1,498 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account identity record",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "format": "email",
+          "maxLength": 256
+        },
+        "role": {
+          "type": "string",
+          "description": "Platform role",
+          "enum": ["Freelancer", "Client", "Admin"]
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name",
+          "maxLength": 120
+        },
+        "freelancerProfileId": {
+          "type": "string",
+          "description": "Associated freelancer profile ID",
+          "maxLength": 128
+        },
+        "clientProfileId": {
+          "type": "string",
+          "description": "Associated client profile ID",
+          "maxLength": 128
+        },
+        "isFullyVerified": {
+          "type": "boolean",
+          "description": "Whether identity verification is complete"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "email", "role", "displayName", "createdAt"]
+    },
+    "FreelancerProfile": {
+      "title": "FreelancerProfile",
+      "description": "Verified freelancer professional profile",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Profile ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owning user UID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Freelancer legal display name",
+          "maxLength": 120
+        },
+        "headline": {
+          "type": "string",
+          "description": "Professional headline",
+          "maxLength": 160
+        },
+        "bio": {
+          "type": "string",
+          "description": "Technical bio and experience",
+          "maxLength": 2000
+        },
+        "primaryRole": {
+          "type": "string",
+          "description": "Engineering role classification",
+          "maxLength": 60
+        },
+        "rateBand": {
+          "type": "string",
+          "description": "Standard rate band classification",
+          "maxLength": 20
+        },
+        "experienceLevel": {
+          "type": "string",
+          "description": "Seniority level",
+          "maxLength": 30
+        },
+        "hourlyRateMinor": {
+          "type": "number",
+          "description": "Hourly rate in minor currency units (paise)"
+        },
+        "isFullyVerified": {
+          "type": "boolean",
+          "description": "Verification compliance status"
+        },
+        "panStatus": {
+          "type": "string",
+          "description": "PAN validation status",
+          "maxLength": 30
+        },
+        "aadhaarStatus": {
+          "type": "string",
+          "description": "Aadhaar validation status",
+          "maxLength": 30
+        },
+        "epfStatus": {
+          "type": "string",
+          "description": "EPF check status",
+          "maxLength": 30
+        },
+        "panNumber": {
+          "type": "string",
+          "description": "Masked or verified PAN identifier",
+          "maxLength": 10
+        },
+        "aadhaarLast4": {
+          "type": "string",
+          "description": "Last 4 digits of Aadhaar",
+          "maxLength": 4
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "userId", "displayName", "primaryRole", "createdAt"]
+    },
+    "ClientProfile": {
+      "title": "ClientProfile",
+      "description": "Verified client company profile",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Profile ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owning user UID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Registered company entity name",
+          "maxLength": 160
+        },
+        "gstin": {
+          "type": "string",
+          "description": "GST Identification Number",
+          "maxLength": 15
+        },
+        "plan": {
+          "type": "string",
+          "description": "Fee plan tier",
+          "maxLength": 30
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "userId", "companyName", "createdAt"]
+    },
+    "Job": {
+      "title": "Job",
+      "description": "Open tech role listing posted by client",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Job ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Client profile ID who posted the job",
+          "maxLength": 128
+        },
+        "clientName": {
+          "type": "string",
+          "description": "Company display name",
+          "maxLength": 160
+        },
+        "title": {
+          "type": "string",
+          "description": "Job title",
+          "maxLength": 160
+        },
+        "description": {
+          "type": "string",
+          "description": "Comprehensive role description and scope",
+          "maxLength": 5000
+        },
+        "roleCategory": {
+          "type": "string",
+          "description": "Engineering discipline category",
+          "maxLength": 60
+        },
+        "channel": {
+          "type": "string",
+          "description": "Contract channel (B2B or B2C)",
+          "maxLength": 10
+        },
+        "status": {
+          "type": "string",
+          "description": "Job listing status",
+          "enum": ["Open", "Closed", "Filled"]
+        },
+        "budgetMinorMin": {
+          "type": "number",
+          "description": "Minimum budget in minor units"
+        },
+        "budgetMinorMax": {
+          "type": "number",
+          "description": "Maximum budget in minor units"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "clientId", "title", "description", "roleCategory", "status", "createdAt"]
+    },
+    "Proposal": {
+      "title": "Proposal",
+      "description": "Job proposal submitted by a verified freelancer",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Proposal ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "jobId": {
+          "type": "string",
+          "description": "Target job ID",
+          "maxLength": 128
+        },
+        "freelancerId": {
+          "type": "string",
+          "description": "Submitting freelancer profile ID",
+          "maxLength": 128
+        },
+        "coverNote": {
+          "type": "string",
+          "description": "Application cover note",
+          "maxLength": 2000
+        },
+        "proposedRateMinor": {
+          "type": "number",
+          "description": "Proposed payout in minor units"
+        },
+        "status": {
+          "type": "string",
+          "description": "Proposal status",
+          "enum": ["Submitted", "Accepted", "Declined", "Withdrawn"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "jobId", "freelancerId", "status", "createdAt"]
+    },
+    "Contract": {
+      "title": "Contract",
+      "description": "Executed client-freelancer contract with escrow terms",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Contract ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Client profile ID",
+          "maxLength": 128
+        },
+        "clientName": {
+          "type": "string",
+          "description": "Client display name",
+          "maxLength": 160
+        },
+        "counterpartyName": {
+          "type": "string",
+          "description": "Counterparty display name",
+          "maxLength": 160
+        },
+        "freelancerId": {
+          "type": "string",
+          "description": "Freelancer profile ID",
+          "maxLength": 128
+        },
+        "freelancerName": {
+          "type": "string",
+          "description": "Freelancer name",
+          "maxLength": 120
+        },
+        "freelancerRole": {
+          "type": "string",
+          "description": "Role",
+          "maxLength": 60
+        },
+        "jobId": {
+          "type": "string",
+          "description": "Job ID",
+          "maxLength": 128
+        },
+        "jobTitle": {
+          "type": "string",
+          "description": "Job title",
+          "maxLength": 160
+        },
+        "scopeSummary": {
+          "type": "string",
+          "description": "Summary of contractual scope",
+          "maxLength": 500
+        },
+        "status": {
+          "type": "string",
+          "description": "Contract lifecycle status",
+          "enum": ["Active", "Completed", "Cancelled", "Disputed"]
+        },
+        "channel": {
+          "type": "string",
+          "description": "Contract channel",
+          "maxLength": 10
+        },
+        "contractValueMinor": {
+          "type": "number",
+          "description": "Total contract value in minor units"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "clientId", "freelancerId", "status", "contractValueMinor", "createdAt"]
+    },
+    "Milestone": {
+      "title": "Milestone",
+      "description": "Discrete deliverable milestone with dedicated escrow",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Milestone ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "contractId": {
+          "type": "string",
+          "description": "Parent contract ID",
+          "maxLength": 128
+        },
+        "title": {
+          "type": "string",
+          "description": "Milestone title and deliverable specification",
+          "maxLength": 200
+        },
+        "contractValueMinor": {
+          "type": "number",
+          "description": "Milestone escrow allocation in minor units"
+        },
+        "state": {
+          "type": "string",
+          "description": "Escrow milestone state",
+          "enum": ["Unfunded", "Funded", "InProgress", "Submitted", "ApprovedReleased", "Disputed"]
+        },
+        "reviewWindowDays": {
+          "type": "number",
+          "description": "Days allocated for client deliverable review"
+        },
+        "fundedAt": {
+          "type": "string",
+          "description": "Escrow deposit timestamp",
+          "format": "date-time"
+        },
+        "submittedAt": {
+          "type": "string",
+          "description": "Work submission timestamp",
+          "format": "date-time"
+        },
+        "reviewDeadlineAt": {
+          "type": "string",
+          "description": "Auto-release deadline timestamp",
+          "format": "date-time"
+        },
+        "releasedAt": {
+          "type": "string",
+          "description": "Payout release timestamp",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "contractId", "title", "contractValueMinor", "state", "createdAt"]
+    },
+    "LedgerEntry": {
+      "title": "LedgerEntry",
+      "description": "Double-entry accounting transaction for escrow movements",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ledger entry transaction ID",
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "maxLength": 128
+        },
+        "milestoneId": {
+          "type": "string",
+          "description": "Associated milestone ID",
+          "maxLength": 128
+        },
+        "type": {
+          "type": "string",
+          "description": "Transaction category",
+          "enum": ["EscrowFund", "FreelancerPayout", "ClientFee", "FreelancerFee", "EscrowRefund"]
+        },
+        "amountMinor": {
+          "type": "number",
+          "description": "Transaction value in minor units"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Transaction timestamp",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "milestoneId", "type", "amountMinor", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "User" },
+      "description": "User identity and authentication records"
+    },
+    "/freelancerProfiles/{profileId}": {
+      "schema": { "$ref": "FreelancerProfile" },
+      "description": "Freelancer professional profiles"
+    },
+    "/clientProfiles/{profileId}": {
+      "schema": { "$ref": "ClientProfile" },
+      "description": "Client business organization profiles"
+    },
+    "/jobs/{jobId}": {
+      "schema": { "$ref": "Job" },
+      "description": "Tech jobs marketplace listings"
+    },
+    "/proposals/{proposalId}": {
+      "schema": { "$ref": "Proposal" },
+      "description": "Job proposals submitted by freelancers"
+    },
+    "/contracts/{contractId}": {
+      "schema": { "$ref": "Contract" },
+      "description": "Talent contracts between clients and freelancers"
+    },
+    "/contracts/{contractId}/milestones/{milestoneId}": {
+      "schema": { "$ref": "Milestone" },
+      "description": "Deliverable milestones under a contract"
+    },
+    "/ledgerEntries/{entryId}": {
+      "schema": { "$ref": "LedgerEntry" },
+      "description": "Immutable double-entry escrow ledger log"
+    }
+  }
+}
