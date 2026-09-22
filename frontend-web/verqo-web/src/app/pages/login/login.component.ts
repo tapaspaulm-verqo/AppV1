@@ -32,6 +32,18 @@ import { AuthService } from '../../core/services/auth.service';
         <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
           {{ submitting() ? 'Logging in…' : 'Log in' }}
         </button>
+
+        <div class="demo-buttons">
+          <span class="demo-title">Quick demo accounts:</span>
+          <div class="demo-actions">
+            <button type="button" class="btn btn-secondary demo-btn" (click)="loginAs('freelancer@verqo.com', 'password123')">
+              Demo Freelancer
+            </button>
+            <button type="button" class="btn btn-secondary demo-btn" (click)="loginAs('client@verqo.com', 'password123')">
+              Demo Client
+            </button>
+          </div>
+        </div>
       </form>
 
       <p class="signup-hint">
@@ -68,6 +80,27 @@ import { AuthService } from '../../core/services/auth.service';
       }
       button {
         margin-top: var(--space-2);
+      }
+      .demo-buttons {
+        margin-top: var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px dashed var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+      .demo-title {
+        font-size: 13px;
+        color: var(--ink-secondary);
+      }
+      .demo-actions {
+        display: flex;
+        gap: var(--space-2);
+      }
+      .demo-btn {
+        flex: 1;
+        font-size: 13px;
+        padding: var(--space-2) var(--space-3);
       }
       .signup-hint {
         margin-top: var(--space-8);
@@ -115,5 +148,10 @@ export class LoginComponent {
         this.errorMessage.set('Invalid email or password.');
       },
     });
+  }
+
+  loginAs(email: string, pass: string): void {
+    this.form.setValue({ email, password: pass });
+    this.submit();
   }
 }
